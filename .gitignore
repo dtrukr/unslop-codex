@@ -1,0 +1,6 @@
+unslop-output/
+.venv/
+run_*.log
+__pycache__/
+*.pyc
+.DS_Store
