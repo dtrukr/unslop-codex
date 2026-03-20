@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LedgerLoop — Invoicing for Freelancers and Small Agencies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            sans: ['"Inter"', 'sans-serif']
+          },
+          colors: {
+            ink: '#0f172a',
+            mist: '#f8fafc',
+            coral: '#ff6b57',
+            tealish: '#0f766e',
+            goldish: '#f59e0b'
+          },
+          boxShadow: {
+            soft: '0 20px 50px rgba(15, 23, 42, 0.08)'
+          },
+          keyframes: {
+            floaty: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' }
+            },
+            fadeUp: {
+              '0%': { opacity: 0, transform: 'translateY(18px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' }
+            }
+          },
+          animation: {
+            floaty: 'floaty 5s ease-in-out infinite',
+            fadeUp: 'fadeUp .7s ease forwards'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(255,107,87,.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(15,118,110,.12), transparent 24%),
+        linear-gradient(180deg, #fffaf7 0%, #ffffff 28%, #f8fafc 100%);
+    }
+    .glass {
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,.76);
+    }
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(15,23,42,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp .7s ease forwards;
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-800">
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const navItems = [
+      { label: "Features", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+      { label: "FAQ", href: "#faq" }
+    ];
+
+    const features = [
+      {
+        title: "Invoices that look premium",
+        text: "Send polished invoices with your logo, payment terms, taxes, and line items in minutes."
+      },
+      {
+        title: "Automatic payment chasing",
+        text: "Gentle reminders go out before and after due dates so you spend less time following up."
+      },
+      {
+        title: "Client-ready reporting",
+        text: "Track paid, pending, overdue, and monthly revenue without exporting spreadsheets."
+      },
+      {
+        title: "Built for freelancers and lean teams",
+        text: "Create separate workspaces, invite collaborators, and keep client billing organized."
+      }
+    ];
+
+    const pricing = [
+      {
+        name: "Solo",
+        price: "$12",
+        desc: "For independent freelancers who want clean invoicing and faster payments.",
+        features: ["Unlimited invoices", "3 branded templates", "Auto reminders", "Basic analytics"],
+        cta: "Start Solo",
+        highlight: false
+      },
+      {
+        name: "Studio",
+        price: "$29",
+        desc: "For small agencies managing multiple retainers, teammates, and higher volume.",
+        features: ["Everything in Solo", "Team seats included", "Client portals", "Advanced reports"],
+        cta: "Choose Studio",
+        highlight: true
+      },
+      {
+        name: "Scale",
+        price: "$79",
+        desc: "For growing teams that need controls, visibility, and custom workflows.",
+        features: ["Everything in Studio", "Approval flows", "Priority support", "Custom exports"],
+        cta: "Book Demo",
+        highlight: false
+      }
+    ];
+
+    const faqs = [
+      {
+        q: "Can I use LedgerLoop for recurring retainers?",
+        a: "Yes. You can create recurring invoices for monthly retainers, maintenance plans, or subscription-style client work."
+      },
+      {
+        q: "Does it support taxes and multiple currencies?",
+        a: "Yes. Add tax rates per invoice, define payment terms, and bill clients in multiple currencies."
+      },
+      {
+        q: "Can clients pay online?",
+        a: "You can attach payment links, bank transfer instructions, and track paid status from the invoice dashboard."
+      },
+      {
+        q: "Is this only for agencies?",
+        a: "No. It is designed for solo freelancers first, with team features layered in for small agencies."
+      }
+    ];
+
+    function Navbar() {
+      const [open, setOpen] = useState(false);
+
+      return (
+        <header className="sticky top-0 z-50 border-b border-slate-200/70 glass">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+            <a href="#" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-soft">
+                <span className="font-display text-lg">L</span>
+              </div>
+              <div>
+                <div className="font-display text-lg font-bold text-slate-900">LedgerLoop</div>
+                <div className="text-xs text-slate-500">Invoicing that closes faster</div>
+              </div>
+            </a>
+
+            <nav className="hidden items-center gap-8 md:flex">
+              {navItems.map(item => (
+                <a key={item.label} href={item.href} className="text-sm font-medium text-slate-600 transition hover:text-slate-900">
+                  {item.label}
+                </a>
+              ))}
+              <a href="#pricing" className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
+                Start Free
+              </a>
+            </nav>
+
+            <button
+              className="rounded-xl border border-slate-300 p-2 md:hidden"
+              onClick={() => setOpen(!open)}
+              aria-label="Toggle navigation"
+            >
+              <div className="space-y-1.5">
+                <span className="block h-0.5 w-5 bg-slate-800"></span>
+                <span className="block h-0.5 w-5 bg-slate-800"></span>
+                <span className="block h-0.5 w-5 bg-slate-800"></span>
+              </div>
+            </button>
+          </div>
+
+          {open && (
+            <div className="border-t border-slate-200 bg-white px-6 py-4 md:hidden">
+              <div className="flex flex-col gap-4">
+                {navItems.map(item => (
+                  <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="text-sm font-medium text-slate-700">
+                    {item.label}
+                  </a>
+                ))}
+                <a href="#pricing" onClick={() => setOpen(false)} className="rounded-full bg-slate-900 px-4 py-2 text-center text-sm font-semibold text-white">
+                  Start Free
+                </a>
+              </div>
+            </div>
+          )}
+        </header>
+      );
+    }
+
+    function Hero() {
+      return (
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 grid-bg opacity-40"></div>
+          <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:py-24">
+            <div className="reveal" style={{ animationDelay: "0.08s" }}>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-white/80 px-3 py-1 text-sm font-medium text-slate-700 shadow-sm">
+                <span className="h-2 w-2 rounded-full bg-coral"></span>
+                Less admin. Faster payments.
+              </div>
+              <h1 className="max-w-3xl font-display text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+                Invoicing for freelancers who'd rather do client work.
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+                Create branded invoices, automate reminders, and keep your cash flow visible without wrestling spreadsheets or bloated finance tools.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a href="#pricing" className="rounded-full bg-slate-900 px-6 py-3 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-700">
+                  Start 14-day trial
+                </a>
+                <a href="#features" className="rounded-full border border-slate-300 bg-white px-6 py-3 text-center text-sm font-semibold text-slate-700 transition hover:border-slate-900 hover:text-slate-900">
+                  See how it works
+                </a>
+              </div>
+              <div className="mt-10 flex flex-wrap gap-6 text-sm text-slate-500">
+                <span>No credit card required</span>
+                <span>Used by 4,200+ independents</span>
+                <span>Average payment time down 31%</span>
+              </div>
+            </div>
+
+            <div className="reveal lg:pl-8" style={{ animationDelay: "0.18s" }}>
+              <div className="animate-floaty rounded-[2rem] border border-slate-200 bg-white p-5 shadow-soft">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-slate-500">This month</p>
+                    <p className="font-display text-3xl font-bold text-slate-900">$18,420</p>
+                  </div>
+                  <div className="rounded-2xl bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">+14.8%</div>
+                </div>
+                <div className="space-y-3">
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-semibold text-slate-900">Harbor Studio</span>
+                      <span className="text-emerald-600">Paid</span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-sm text-slate-500">
+                      <span>Brand sprint • INV-2418</span>
+                      <span>$3,200</span>
+                    </div>
+                  </div>
+                  <div className="rounded-2xl bg-orange-50 p-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-semibold text-slate-900">Northline Media</span>
+                      <span className="text-orange-700">Due tomorrow</span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-sm text-slate-500">
+                      <span>Monthly retainer</span>
+                      <span>$2,800</span>
+                    </div>
+                  </div>
+                  <div className="rounded-2xl bg-slate-900 p-5 text-white">
+                    <p className="text-sm text-slate-300">Auto-reminder scheduled</p>
+                    <p className="mt-2 font-display text-xl font-semibold">3 overdue invoices will get a follow-up at 9:00 AM.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function LogoStrip() {
+      return (
+        <section className="mx-auto max-w-7xl px-6 py-6 lg:px-8">
+          <div className="rounded-3xl border border-slate-200 bg-white/70 px-6 py-5 shadow-sm">
+            <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <span>North Atlas</span>
+              <span>FrameHaus</span>
+              <span>Brightline</span>
+              <span>Vanta Studio</span>
+              <span>Mint Form</span>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Features() {
+      return (
+        <section id="features" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="mb-12 max-w-2xl">
+            <p className="font-display text-sm font-bold uppercase tracking-[0.2em] text-tealish">Why it works</p>
+            <h2 className="mt-3 font-display text-4xl font-bold text-slate-900">Everything you need to get paid without adding back-office drag.</h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {features.map((feature, i) => (
+              <div
+                key={feature.title}
+                className="reveal rounded-[1.75rem] border border-slate-200 bg-white p-7 shadow-soft"
+                style={{ animationDelay: `${0.1 + i * 0.08}s` }}
+              >
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 text-lg">
+                  {["✦", "↗", "◌", "▣"][i]}
+                </div>
+                <h3 className="font-display text-2xl font-bold text-slate-900">{feature.title}</h3>
+                <p className="mt-3 text-slate-600 leading-7">{feature.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function Pricing() {
+      return (
+        <section id="pricing" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+          <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl">
+              <p className="font-display text-sm font-bold uppercase tracking-[0.2em] text-coral">Pricing</p>
+              <h2 className="mt-3 font-display text-4xl font-bold text-slate-900">Simple plans that scale from solo work to client teams.</h2>
+            </div>
+            <p className="max-w-md text-slate-600">All plans include unlimited clients, invoice history, and secure cloud access.</p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {pricing.map((plan, i) => (
+              <div
+                key={plan.name}
+                className={`reveal rounded-[2rem] border p-7 shadow-soft ${plan.highlight ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white"}`}
+                style={{ animationDelay: `${0.1 + i * 0.08}s` }}
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className={`font-display text-2xl font-bold ${plan.highlight ? "text-white" : "text-slate-900"}`}>{plan.name}</h3>
+                    <p className={`mt-2 text-sm leading-6 ${plan.highlight ? "text-slate-300" : "text-slate-600"}`}>{plan.desc}</p>
+                  </div>
+                  {plan.highlight && <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-300">Popular</span>}
+                </div>
+                <div className="mt-8">
+                  <span className={`font-display text-5xl font-bold ${plan.highlight ? "text-white" : "text-slate-900"}`}>{plan.price}</span>
+                  <span className={`${plan.highlight ? "text-slate-300" : "text-slate-500"}`}> / month</span>
+                </div>
+                <ul className="mt-8 space-y-3">
+                  {plan.features.map(item => (
+                    <li key={item} className={`flex items-center gap-3 text-sm ${plan.highlight ? "text-slate-200" : "text-slate-700"}`}>
+                      <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full ${plan.highlight ? "bg-white/10 text-amber-300" : "bg-emerald-50 text-emerald-600"}`}>✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="#"
+                  className={`mt-8 block rounded-full px-5 py-3 text-center text-sm font-semibold transition hover:-translate-y-0.5 ${
+                    plan.highlight ? "bg-white text-slate-900 hover:bg-slate-100" : "bg-slate-900 text-white hover:bg-slate-700"
+                  }`}
+                >
+                  {plan.cta}
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function FAQ() {
+      const [openIndex, setOpenIndex] = useState(0);
+
+      return (
+        <section id="faq" className="mx-auto max-w-4xl px-6 py-20 lg:px-8">
+          <div className="mb-10 text-center">
+            <p className="font-display text-sm font-bold uppercase tracking-[0.2em] text-goldish">FAQ</p>
+            <h2 className="mt-3 font-display text-4xl font-bold text-slate-900">Questions agencies and freelancers ask before switching.</h2>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((item, index) => {
+              const open = openIndex === index;
+              return (
+                <div key={item.q} className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm">
+                  <button
+                    className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                    onClick={() => setOpenIndex(open ? -1 : index)}
+                  >
+                    <span className="text-base font-semibold text-slate-900">{item.q}</span>
+                    <span className={`text-2xl transition ${open ? "rotate-45" : ""}`}>+</span>
+                  </button>
+                  <div className={`grid transition-all duration-300 ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+                    <div className="overflow-hidden">
+                      <p className="px-6 pb-6 text-slate-600 leading-7">{item.a}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      );
+    }
+
+    function CTA() {
+      return (
+        <section className="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
+          <div className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-tealish p-10 text-white shadow-soft md:p-14">
+            <div className="max-w-3xl">
+              <p className="font-display text-sm font-bold uppercase tracking-[0.25em] text-amber-300">Ready to simplify billing?</p>
+              <h2 className="mt-4 font-display text-4xl font-bold">Spend less time chasing invoices and more time shipping client work.</h2>
+              <p className="mt-4 max-w-2xl text-slate-200 leading-7">
+                Start with a free trial, import your clients, and send your first invoice in under ten minutes.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a href="#pricing" className="rounded-full bg-white px-6 py-3 text-center text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                  Start free trial
+                </a>
+                <a href="#faq" className="rounded-full border border-white/25 px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10">
+                  View FAQ
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer className="border-t border-slate-200 bg-white/80">
+          <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-500 md:flex-row md:items-center md:justify-between lg:px-8">
+            <div>
+              <span className="font-display font-bold text-slate-900">LedgerLoop</span> © 2026
+            </div>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-slate-900">Privacy</a>
+              <a href="#" className="hover:text-slate-900">Terms</a>
+              <a href="#" className="hover:text-slate-900">Contact</a>
+            </div>
+          </div>
+        </footer>
+      );
+    }
+
+    function App() {
+      return (
+        <div>
+          <Navbar />
+          <Hero />
+          <LogoStrip />
+          <Features />
+          <Pricing />
+          <FAQ />
+          <CTA />
+          <Footer />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

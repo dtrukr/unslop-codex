@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarePilot | Scheduling Automation for Modern Clinics</title>
+  <meta
+    name="description"
+    content="CarePilot helps clinics automate patient scheduling, confirmations, intake reminders, and staff workflows with HIPAA-conscious operations."
+  />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            slateNight: "#0f172a",
+            ink: "#172033",
+            mint: "#d7fff2",
+            tealbrand: "#0f766e",
+            tealsoft: "#14b8a6",
+            skysoft: "#dbeafe",
+            sand: "#f8fafc"
+          },
+          fontFamily: {
+            sans: ["Inter", "system-ui", "sans-serif"],
+            display: ["Manrope", "Inter", "sans-serif"]
+          },
+          boxShadow: {
+            glow: "0 20px 60px rgba(15, 118, 110, 0.18)"
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(20,184,166,0.16), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(59,130,246,0.12), transparent 24%),
+        linear-gradient(180deg, #f8fafc 0%, #eef7f5 44%, #ffffff 100%);
+      color: #172033;
+    }
+    .glass {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.65);
+    }
+    .mesh-card {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.9), rgba(241,245,249,0.86)),
+        radial-gradient(circle at top right, rgba(20,184,166,0.13), transparent 32%);
+    }
+    .grid-fade {
+      background-image:
+        linear-gradient(rgba(15,23,42,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    }
+  </style>
+</head>
+<body class="font-sans antialiased">
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function SectionTitle({ eyebrow, title, subtitle, center = false }) {
+      return (
+        <div className={center ? "text-center max-w-3xl mx-auto" : "max-w-2xl"}>
+          <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-tealbrand">
+            <span className="h-2 w-2 rounded-full bg-tealsoft"></span>
+            {eyebrow}
+          </div>
+          <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-slateNight sm:text-4xl">
+            {title}
+          </h2>
+          <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+            {subtitle}
+          </p>
+        </div>
+      );
+    }
+
+    function Stat({ value, label }) {
+      return (
+        <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-5 shadow-sm">
+          <div className="font-display text-3xl font-extrabold text-slateNight">{value}</div>
+          <div className="mt-1 text-sm text-slate-600">{label}</div>
+        </div>
+      );
+    }
+
+    function FeatureCard({ title, text, icon }) {
+      return (
+        <div className="mesh-card rounded-3xl border border-white/70 p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-glow">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-xl text-tealbrand">
+            {icon}
+          </div>
+          <h3 className="mt-5 text-xl font-semibold text-slateNight">{title}</h3>
+          <p className="mt-3 text-sm leading-7 text-slate-600">{text}</p>
+        </div>
+      );
+    }
+
+    function Testimonial({ quote, name, role }) {
+      return (
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-base leading-7 text-slate-700">“{quote}”</p>
+          <div className="mt-6">
+            <div className="font-semibold text-slateNight">{name}</div>
+            <div className="text-sm text-slate-500">{role}</div>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [menuOpen, setMenuOpen] = useState(false);
+
+      return (
+        <div>
+          <header className="sticky top-0 z-40 border-b border-white/60 bg-white/75 backdrop-blur-xl">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+              <a href="#" className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slateNight text-white shadow-lg">
+                  <span className="text-lg font-bold">C</span>
+                </div>
+                <div>
+                  <div className="font-display text-lg font-extrabold text-slateNight">CarePilot</div>
+                  <div className="text-xs text-slate-500">Clinic Scheduling Automation</div>
+                </div>
+              </a>
+
+              <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
+                <a href="#workflow" className="hover:text-slateNight">Workflow</a>
+                <a href="#security" className="hover:text-slateNight">Security</a>
+                <a href="#testimonials" className="hover:text-slateNight">Testimonials</a>
+                <a href="#demo" className="hover:text-slateNight">Book Demo</a>
+              </nav>
+
+              <div className="hidden md:block">
+                <a href="#demo" className="rounded-full bg-slateNight px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-tealbrand">
+                  Request Live Demo
+                </a>
+              </div>
+
+              <button
+                className="rounded-xl border border-slate-200 p-2 text-slate-700 md:hidden"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? "✕" : "☰"}
+              </button>
+            </div>
+
+            {menuOpen && (
+              <div className="border-t border-slate-200 bg-white px-6 py-4 md:hidden">
+                <div className="flex flex-col gap-4 text-sm font-medium text-slate-600">
+                  <a href="#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
+                  <a href="#security" onClick={() => setMenuOpen(false)}>Security</a>
+                  <a href="#testimonials" onClick={() => setMenuOpen(false)}>Testimonials</a>
+                  <a href="#demo" onClick={() => setMenuOpen(false)}>Book Demo</a>
+                </div>
+              </div>
+            )}
+          </header>
+
+          <main>
+            <section className="relative overflow-hidden">
+              <div className="absolute inset-0 grid-fade"></div>
+              <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-28">
+                <div className="max-w-2xl">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-white/80 px-4 py-2 text-sm font-medium text-tealbrand">
+                    HIPAA-conscious scheduling workflows for outpatient clinics
+                  </div>
+                  <h1 className="mt-6 font-display text-5xl font-extrabold tracking-tight text-slateNight sm:text-6xl">
+                    Fill calendars faster without pulling staff into endless phone tag.
+                  </h1>
+                  <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+                    CarePilot automates appointment booking, reminders, intake nudges, rescheduling, and schedule recovery so your front desk spends less time coordinating and more time helping patients.
+                  </p>
+
+                  <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                    <a href="#demo" className="rounded-full bg-slateNight px-6 py-3.5 text-center text-sm font-semibold text-white transition hover:bg-tealbrand">
+                      Book a Live Demo
+                    </a>
+                    <a href="#workflow" className="rounded-full border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-semibold text-slateNight transition hover:border-slate-400">
+                      See the Workflow
+                    </a>
+                  </div>
+
+                  <div className="mt-10 grid max-w-xl grid-cols-1 gap-4 sm:grid-cols-3">
+                    <Stat value="37%" label="Fewer manual scheduling touches" />
+                    <Stat value="2.4x" label="Faster appointment confirmations" />
+                    <Stat value="< 10 min" label="Typical onboarding for one location" />
+                  </div>
+                </div>
+
+                <div className="glass rounded-[32px] p-5 shadow-glow">
+                  <div className="rounded-[28px] bg-slateNight p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm text-teal-200">Today’s Schedule Recovery</div>
+                        <div className="mt-1 text-2xl font-bold">14 open slots backfilled</div>
+                      </div>
+                      <div className="rounded-2xl bg-white/10 px-3 py-2 text-sm">Live</div>
+                    </div>
+
+                    <div className="mt-6 space-y-4">
+                      <div className="rounded-2xl bg-white/10 p-4">
+                        <div className="text-xs uppercase tracking-[0.2em] text-teal-200">Automation</div>
+                        <div className="mt-2 font-semibold">Waitlist outreach triggered</div>
+                        <div className="mt-1 text-sm text-slate-200">3 cancellation openings matched to eligible patients by specialty, insurance, and preferred time.</div>
+                      </div>
+
+                      <div className="rounded-2xl bg-white/10 p-4">
+                        <div className="flex items-center justify-between text-sm">
+                          <span>Reminder response rate</span>
+                          <span className="font-semibold text-mint">82%</span>
+                        </div>
+                        <div className="mt-3 h-2 rounded-full bg-white/10">
+                          <div className="h-2 w-[82%] rounded-full bg-gradient-to-r from-tealsoft to-cyan-300"></div>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-2xl bg-white/10 p-4">
+                          <div className="text-sm text-slate-300">Inbound calls avoided</div>
+                          <div className="mt-1 text-2xl font-bold">126</div>
+                        </div>
+                        <div className="rounded-2xl bg-white/10 p-4">
+                          <div className="text-sm text-slate-300">No-show risk flagged</div>
+                          <div className="mt-1 text-2xl font-bold">19</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 rounded-[24px] bg-white p-5">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-semibold text-slateNight">Built for busy clinics</div>
+                        <div className="text-sm text-slate-500">Multi-location, specialty, and provider-aware scheduling logic</div>
+                      </div>
+                      <div className="rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-tealbrand">HIPAA-conscious</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+              <div className="rounded-[32px] border border-slate-200 bg-white/80 p-8 shadow-sm">
+                <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+                  <SectionTitle
+                    eyebrow="Why Teams Switch"
+                    title="One scheduling layer for calls, texts, reminders, and reschedules."
+                    subtitle="Replace fragmented workflows with a single automation system that handles repetitive coordination while keeping staff in control of exceptions."
+                  />
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="rounded-2xl bg-slate-50 p-5">
+                      <div className="text-sm font-semibold text-slateNight">Patient self-booking</div>
+                      <div className="mt-2 text-sm leading-6 text-slate-600">Route patients to the right provider and slot using customizable intake questions and clinic rules.</div>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-5">
+                      <div className="text-sm font-semibold text-slateNight">Smart reminders</div>
+                      <div className="mt-2 text-sm leading-6 text-slate-600">Deliver reminders and confirmations across channels with escalation for non-responders.</div>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-5">
+                      <div className="text-sm font-semibold text-slateNight">Waitlist recovery</div>
+                      <div className="mt-2 text-sm leading-6 text-slate-600">Backfill cancellations automatically based on preference, eligibility, and urgency.</div>
+                    </div>
+                    <div className="rounded-2xl bg-slate-50 p-5">
+                      <div className="text-sm font-semibold text-slateNight">Staff visibility</div>
+                      <div className="mt-2 text-sm leading-6 text-slate-600">Track automation activity, intervention points, and clinic performance from one dashboard.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="workflow" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+              <SectionTitle
+                eyebrow="Workflow Automation"
+                title="Automations that reduce front-desk load from intake to follow-up."
+                subtitle="CarePilot coordinates the repetitive tasks around scheduling so your team can focus on patients, provider issues, and edge cases that actually need human attention."
+                center={true}
+              />
+              <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+                <FeatureCard
+                  icon="①"
+                  title="Capture demand"
+                  text="Collect new appointment requests from web, referral, or phone-assisted workflows and normalize them into one queue."
+                />
+                <FeatureCard
+                  icon="②"
+                  title="Match the right slot"
+                  text="Apply provider, location, appointment-type, insurance, and availability rules before presenting booking options."
+                />
+                <FeatureCard
+                  icon="③"
+                  title="Automate outreach"
+                  text="Send confirmation requests, prep reminders, intake prompts, and reschedule nudges with no manual follow-up chain."
+                />
+                <FeatureCard
+                  icon="④"
+                  title="Recover the schedule"
+                  text="Use waitlists and vacancy logic to refill canceled appointments before they become lost revenue."
+                />
+              </div>
+            </section>
+
+            <section id="security" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+              <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+                <div className="rounded-[30px] bg-slateNight p-8 text-white shadow-glow">
+                  <div className="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-teal-200">
+                    Security
+                  </div>
+                  <h3 className="mt-5 font-display text-3xl font-extrabold">HIPAA-conscious by design, with operational guardrails for clinic teams.</h3>
+                  <p className="mt-4 text-base leading-7 text-slate-200">
+                    CarePilot is built to support protected workflows with role-based access, audit visibility, and configurable communication patterns that help teams operate more safely and consistently.
+                  </p>
+                  <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                    <div className="rounded-2xl bg-white/10 p-4">
+                      <div className="font-semibold">Role-based permissions</div>
+                      <div className="mt-2 text-sm text-slate-300">Limit operational access by clinic role, location, and workflow responsibility.</div>
+                    </div>
+                    <div className="rounded-2xl bg-white/10 p-4">
+                      <div className="font-semibold">Audit visibility</div>
+                      <div className="mt-2 text-sm text-slate-300">Track scheduling changes, message events, and staff interventions in one place.</div>
+                    </div>
+                    <div className="rounded-2xl bg-white/10 p-4">
+                      <div className="font-semibold">Controlled messaging</div>
+                      <div className="mt-2 text-sm text-slate-300">Set communication policies and escalation paths to fit your clinic’s compliance posture.</div>
+                    </div>
+                    <div className="rounded-2xl bg-white/10 p-4">
+                      <div className="font-semibold">Implementation support</div>
+                      <div className="mt-2 text-sm text-slate-300">Work with a deployment team that understands operational risk and rollout discipline.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm">
+                  <div className="text-sm font-semibold uppercase tracking-[0.2em] text-tealbrand">What clinics value</div>
+                  <div className="mt-4 space-y-5">
+                    {[
+                      "Fewer ad hoc texting and calling processes spread across staff members.",
+                      "More consistent patient communication windows and reminder logic.",
+                      "A clearer operational record when schedules shift, confirmations change, or interventions happen.",
+                      "Configurable workflows that can be reviewed with internal compliance and operations stakeholders."
+                    ].map((item) => (
+                      <div key={item} className="flex gap-4 rounded-2xl bg-slate-50 p-4">
+                        <div className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-teal-100 text-xs font-bold text-tealbrand">✓</div>
+                        <p className="text-sm leading-7 text-slate-600">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-6 text-xs leading-6 text-slate-500">
+                    Note: Final compliance posture depends on your organization’s configuration, policies, and implementation choices.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section id="testimonials" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+              <SectionTitle
+                eyebrow="Testimonials"
+                title="Trusted by operations leaders who need reliability, not another dashboard."
+                subtitle="Teams use CarePilot to reduce manual coordination without losing control over patient experience."
+                center={true}
+              />
+              <div className="mt-12 grid gap-6 lg:grid-cols-3">
+                <Testimonial
+                  quote="We cut confirmation call volume dramatically in the first month. The staff impact was immediate, and our schedule stopped leaking avoidable gaps."
+                  name="Melissa Grant"
+                  role="Clinic Operations Director, Westbrook Orthopedics"
+                />
+                <Testimonial
+                  quote="The waitlist automation alone paid attention to details our old tools missed. Patients got earlier visits, and providers saw fewer idle blocks."
+                  name="Dr. Aaron Liu"
+                  role="Medical Director, Harbor Family Practice"
+                />
+                <Testimonial
+                  quote="What stood out was the control. We could automate heavily without feeling like we were handing scheduling over to a black box."
+                  name="Nina Patel"
+                  role="VP of Patient Access, ClearPath Specialty Group"
+                />
+              </div>
+            </section>
+
+            <section id="demo" className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+              <div className="relative overflow-hidden rounded-[36px] bg-slateNight px-8 py-10 text-white shadow-glow sm:px-10 lg:px-14 lg:py-14">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(45,212,191,0.22),transparent_28%)]"></div>
+                <div className="relative grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+                  <div className="max-w-xl">
+                    <div className="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-teal-200">
+                      Book a Live Demo
+                    </div>
+                    <h2 className="mt-5 font-display text-4xl font-extrabold tracking-tight">
+                      See how CarePilot fits your clinic’s scheduling workflow.
+                    </h2>
+                    <p className="mt-4 text-lg leading-8 text-slate-200">
+                      Get a tailored walkthrough of intake routing, scheduling logic, reminder automation, and HIPAA-conscious operational controls for your team.
+                    </p>
+                    <div className="mt-8 grid gap-3 text-sm text-slate-200 sm:grid-cols-2">
+                      <div className="rounded-2xl bg-white/10 p-4">20-minute live workflow review</div>
+                      <div className="rounded-2xl bg-white/10 p-4">Clinic-specific automation recommendations</div>
+                      <div className="rounded-2xl bg-white/10 p-4">Security and rollout discussion</div>
+                      <div className="rounded-2xl bg-white/10 p-4">Questions answered by product specialists</div>
+                    </div>
+                  </div>
+
+                  <form className="rounded-[28px] bg-white p-6 text-slateNight shadow-2xl">
+                    <div className="grid gap-4">
+                      <div>
+                        <label className="mb-2 block text-sm font-semibold">Full name</label>
+                        <input className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-tealsoft focus:ring-2 focus:ring-teal-100" placeholder="Jordan Reeves" />
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-sm font-semibold">Work email</label>
+                        <input type="email" className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-tealsoft focus:ring-2 focus:ring-teal-100" placeholder="jordan@clinic.com" />
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-sm font-semibold">Clinic size</label>
+                        <select className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-tealsoft focus:ring-2 focus:ring-teal-100">
+                          <option>1-5 providers</option>
+                          <option>6-20 providers</option>
+                          <option>21-50 providers</option>
+                          <option>50+ providers</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-sm font-semibold">Primary challenge</label>
+                        <textarea rows="4" className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-tealsoft focus:ring-2 focus:ring-teal-100" placeholder="No-shows, cancellations, rescheduling volume, reminder response rates..."></textarea>
+                      </div>
+                      <button type="button" className="mt-2 rounded-full bg-slateNight px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-tealbrand">
+                        Request Demo
+                      </button>
+                      <p className="text-xs leading-6 text-slate-500">
+                        By submitting, you agree to be contacted about a live demo. Please avoid sending patient-specific data through this form.
+                      </p>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </section>
+          </main>
+
+          <footer className="border-t border-slate-200 bg-white/70">
+            <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+              <div>
+                <span className="font-semibold text-slateNight">CarePilot</span> · Scheduling automation for modern clinics
+              </div>
+              <div className="flex gap-6">
+                <a href="#workflow" className="hover:text-slateNight">Workflow</a>
+                <a href="#security" className="hover:text-slateNight">Security</a>
+                <a href="#demo" className="hover:text-slateNight">Demo</a>
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

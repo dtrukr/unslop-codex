@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northstar Hire | Remote Hiring SaaS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root{
+      --bg:#f5efe3;
+      --paper:#fffaf0;
+      --ink:#132018;
+      --muted:#5b6a60;
+      --line:rgba(19,32,24,.12);
+      --card:rgba(255,255,255,.78);
+      --green:#1d6b45;
+      --green-2:#2d8b5a;
+      --moss:#dce8d8;
+      --gold:#d9a441;
+      --shadow:0 20px 60px rgba(19,32,24,.08);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"Manrope",system-ui,sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(217,164,65,.18), transparent 26%),
+        radial-gradient(circle at left 20%, rgba(45,139,90,.18), transparent 28%),
+        linear-gradient(180deg, #f8f2e8 0%, #f4ecdf 100%);
+      color:var(--ink);
+    }
+    a{text-decoration:none;color:inherit}
+    .container{width:min(1160px, calc(100% - 40px)); margin:0 auto}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px;
+      background:rgba(255,250,240,.75); border:1px solid var(--line); border-radius:999px;
+      font-size:13px; color:var(--muted); backdrop-filter:blur(10px);
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:14px 20px; border-radius:999px; border:1px solid transparent; font-weight:700;
+      transition:.25s ease; cursor:pointer;
+    }
+    .btn.primary{background:var(--ink); color:#fff}
+    .btn.primary:hover{transform:translateY(-2px); box-shadow:0 16px 30px rgba(19,32,24,.15)}
+    .btn.secondary{background:transparent; border-color:var(--line)}
+    .btn.secondary:hover{background:rgba(255,255,255,.5)}
+    .grid{display:grid; gap:20px}
+    .card{
+      background:var(--card); border:1px solid rgba(19,32,24,.08); border-radius:var(--radius);
+      box-shadow:var(--shadow); backdrop-filter:blur(10px);
+    }
+    .section{padding:76px 0}
+    .eyebrow{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--green); font-weight:800}
+    h1,h2,h3{margin:0; line-height:1}
+    h1{font-size:clamp(3.4rem, 7vw, 6.8rem); letter-spacing:-.06em}
+    h2{font-size:clamp(2rem, 4vw, 3.5rem); letter-spacing:-.05em}
+    h3{font-size:1.2rem; letter-spacing:-.03em}
+    p{margin:0; color:var(--muted); line-height:1.7}
+    .hero{
+      padding:26px 0 44px; position:relative; overflow:hidden;
+    }
+    .hero-shell{
+      border:1px solid rgba(19,32,24,.09); border-radius:34px; padding:22px;
+      background:linear-gradient(180deg, rgba(255,251,244,.88), rgba(255,246,232,.68));
+      box-shadow:var(--shadow);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:48px;
+    }
+    .nav-links{display:flex; gap:18px; color:var(--muted); font-size:14px}
+    .brand{
+      display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.04em;
+    }
+    .brand-mark{
+      width:38px;height:38px;border-radius:12px;background:
+      linear-gradient(145deg,var(--ink),var(--green)); color:#fff; display:grid; place-items:center;
+      box-shadow:0 10px 24px rgba(29,107,69,.22);
+    }
+    .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:26px; align-items:end}
+    .lede{font-size:1.12rem; max-width:720px; margin-top:22px}
+    .hero-actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:28px}
+    .hero-proof{display:flex; gap:20px; flex-wrap:wrap; margin-top:28px; color:var(--muted); font-size:14px}
+    .hero-panel{padding:22px}
+    .stat-row,.fit-row,.price-row,.faq-item,.table-row{
+      display:grid; gap:14px;
+    }
+    .stat-row{grid-template-columns:repeat(3,1fr); margin-top:18px}
+    .mini{
+      padding:18px; border-radius:18px; background:rgba(220,232,216,.45); border:1px solid rgba(19,32,24,.07);
+    }
+    .mini strong{font-size:1.5rem; display:block; color:var(--ink)}
+    .panel-head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:18px}
+    .panel-number{font-family:"Instrument Serif",serif; font-size:3.2rem; color:var(--green)}
+    .badge{padding:8px 12px; border-radius:999px; background:var(--moss); color:var(--green); font-size:12px; font-weight:800}
+    .logo-strip{
+      display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:26px;
+    }
+    .logo-chip{
+      padding:14px 16px; text-align:center; border-radius:16px; border:1px solid var(--line);
+      background:rgba(255,255,255,.56); color:#425046; font-weight:700; font-size:14px;
+    }
+    .feature-grid{grid-template-columns:repeat(3,1fr)}
+    .feature-card{padding:22px}
+    .feature-icon{
+      width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
+      background:linear-gradient(145deg, rgba(45,139,90,.18), rgba(217,164,65,.18));
+      margin-bottom:16px;font-weight:800;color:var(--green)
+    }
+    .compare-table{overflow:hidden}
+    .table-head,.table-row{
+      grid-template-columns:1.4fr .9fr .9fr .9fr;
+      align-items:center;
+    }
+    .table-head,.table-row > div{padding:16px 18px}
+    .table-head{
+      background:rgba(19,32,24,.96); color:#fff; font-weight:700;
+    }
+    .table-row:nth-child(even){background:rgba(255,255,255,.54)}
+    .table-row{border-top:1px solid var(--line)}
+    .yes{color:var(--green); font-weight:800}
+    .no{color:#9b6c2f; font-weight:800}
+    .story-grid,.pricing-grid,.cta-grid{grid-template-columns:repeat(2,1fr)}
+    .story-card,.price-card,.cta-card{padding:26px}
+    .quote{font-family:"Instrument Serif",serif; font-size:2rem; line-height:1.15; color:var(--ink)}
+    .story-meta{margin-top:18px; padding-top:18px; border-top:1px solid var(--line)}
+    .fit-row{grid-template-columns:repeat(2,1fr)}
+    .fit-card{padding:24px; background:linear-gradient(180deg, rgba(220,232,216,.34), rgba(255,255,255,.6))}
+    ul{margin:16px 0 0; padding:0; list-style:none}
+    li{padding:9px 0; border-top:1px solid rgba(19,32,24,.08); color:var(--muted)}
+    li:first-child{border-top:0; padding-top:0}
+    .price-card.featured{background:linear-gradient(180deg, rgba(19,32,24,.98), rgba(29,107,69,.96)); color:#fff}
+    .price-card.featured p,.price-card.featured li{color:rgba(255,255,255,.76); border-color:rgba(255,255,255,.12)}
+    .price{font-size:3rem; font-weight:800; letter-spacing:-.06em}
+    .muted{color:var(--muted)}
+    .faq-item{
+      grid-template-columns:1fr auto; padding:22px; align-items:start; cursor:pointer;
+      transition:.2s ease;
+    }
+    .faq-item:hover{background:rgba(255,255,255,.65)}
+    .faq-answer{grid-column:1 / -1; padding-top:12px}
+    .cta-card{
+      position:relative; overflow:hidden; background:
+      radial-gradient(circle at top right, rgba(217,164,65,.24), transparent 35%),
+      linear-gradient(180deg, rgba(255,251,244,.92), rgba(239,247,240,.82));
+    }
+    footer{padding:28px 0 56px; color:var(--muted); font-size:14px}
+    @media (max-width: 980px){
+      .hero-grid,.feature-grid,.story-grid,.pricing-grid,.cta-grid,.fit-row,.stat-row,.logo-strip{grid-template-columns:1fr}
+      .nav{flex-wrap:wrap}
+      .nav-links{display:none}
+      .table-head,.table-row{grid-template-columns:1.2fr 1fr 1fr 1fr; font-size:14px}
+    }
+    @media (max-width: 720px){
+      h1{font-size:3.2rem}
+      .container{width:min(100% - 22px, 1160px)}
+      .hero-shell{padding:14px}
+      .section{padding:58px 0}
+      .table-head,.table-row{grid-template-columns:1.3fr .8fr .8fr .8fr; font-size:13px}
+      .btn{width:100%}
+      .hero-actions{display:grid}
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const faqs = [
+      ["How does Northstar source remote candidates?", "We combine AI-assisted sourcing, skills-based filters, async screening, and your existing ATS data to surface matched talent across regions without forcing recruiters into manual spreadsheet workflows."],
+      ["Can startups use it without a dedicated talent team?", "Yes. The startup flow is built for founders and small teams: templated scorecards, interview plans, compensation benchmarks, and a lightweight shared inbox."],
+      ["What changes for enterprise buyers?", "Larger companies get approvals, hiring manager calibration, RBAC, SOC 2 controls, multi-brand career pages, and reporting across departments, regions, and recruiters."],
+      ["Do candidates need to create another account?", "No. Candidates can apply through branded links, async take-homes, or recruiter outreach pages. The experience stays clean and fast on mobile."],
+      ["Do you integrate with our stack?", "Northstar connects to common ATS, HRIS, calendar, email, and Slack tools. If a workflow is bespoke, webhooks and exports cover the rest."]
+    ];
+
+    const features = [
+      ["Global sourcing", "Search by timezone overlap, salary band, language fluency, visa status, and stack maturity instead of relying on blunt location filters."],
+      ["Async screening", "Replace repetitive intro calls with short, structured screenings, auto-scored rubrics, and candidate summaries your team can review anytime."],
+      ["Hiring calibration", "Turn vague role briefs into scorecards, interview kits, and consistent pass/fail signals across recruiters and hiring managers."],
+      ["Offer intelligence", "Benchmark compensation against remote markets and generate ranges that reflect seniority, geography, and equity posture."],
+      ["Pipeline analytics", "See stage-by-stage bottlenecks, speed-to-offer, interviewer drift, and sourcing ROI without building another BI project."],
+      ["Candidate experience", "Ship fast branded pages, transparent process timelines, and localized communication that feels human instead of automated."]
+    ];
+
+    const stories = [
+      {
+        title: "Series A startup",
+        quote: "We cut founder interview time in half and filled our first three senior engineering hires across four countries in six weeks.",
+        meta: "LumaForge • 42 employees • From founder-led recruiting to structured remote hiring"
+      },
+      {
+        title: "Global enterprise",
+        quote: "Northstar standardized hiring across five business units without flattening each team's own interview style or employer brand.",
+        meta: "Nexora Systems • 4,800 employees • Unified reporting, approvals, and distributed recruiter ops"
+      }
+    ];
+
+    function FAQItem({ q, a }) {
+      const [open, setOpen] = React.useState(false);
+      return (
+        <div className="card faq-item" onClick={() => setOpen(!open)}>
+          <div>
+            <h3>{q}</h3>
+          </div>
+          <div className="badge">{open ? "Hide" : "Open"}</div>
+          {open && <p className="faq-answer">{a}</p>}
+        </div>
+      );
+    }
+
+    function App() {
+      return (
+        <>
+          <header className="hero">
+            <div className="container hero-shell">
+              <nav className="nav">
+                <div className="brand">
+                  <div className="brand-mark">N</div>
+                  <div>Northstar Hire</div>
+                </div>
+                <div className="nav-links">
+                  <a href="#features">Features</a>
+                  <a href="#compare">Compare</a>
+                  <a href="#stories">Stories</a>
+                  <a href="#pricing">Pricing</a>
+                  <a href="#faq">FAQ</a>
+                </div>
+                <a className="btn secondary" href="#cta">Book demo</a>
+              </nav>
+
+              <div className="hero-grid">
+                <div>
+                  <span className="pill">Remote hiring software for startups and global teams</span>
+                  <h1>Hire across borders without turning recruiting into a spreadsheet problem.</h1>
+                  <p className="lede">
+                    Northstar helps teams source, screen, compare, and close remote talent with fewer meetings,
+                    cleaner decision trails, and role-specific workflows that scale from first hires to multi-brand recruiting.
+                  </p>
+                  <div className="hero-actions">
+                    <a className="btn primary" href="#pricing">Start free trial</a>
+                    <a className="btn secondary" href="#compare">See comparison</a>
+                  </div>
+                  <div className="hero-proof">
+                    <span>92% faster recruiter handoff</span>
+                    <span>38% shorter time-to-offer</span>
+                    <span>Used in 60+ countries</span>
+                  </div>
+                </div>
+
+                <div className="card hero-panel">
+                  <div className="panel-head">
+                    <div>
+                      <div className="eyebrow">Pipeline snapshot</div>
+                      <h3>One view across sourcing to offer</h3>
+                    </div>
+                    <div className="panel-number">24h</div>
+                  </div>
+                  <p>Median time from application to calibrated shortlist for remote-ready roles.</p>
+                  <div className="stat-row">
+                    <div className="mini">
+                      <strong>312</strong>
+                      Candidates auto-scored by fit and async signal quality
+                    </div>
+                    <div className="mini">
+                      <strong>18</strong>
+                      Hiring teams aligned around a shared scorecard
+                    </div>
+                    <div className="mini">
+                      <strong>7</strong>
+                      Finalists with timezone, compensation, and skills overlap
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="logo-strip">
+                {["Patchline", "Morrow", "KilnLabs", "Nexora", "Fieldcraft"].map(name => (
+                  <div key={name} className="logo-chip">{name}</div>
+                ))}
+              </div>
+            </div>
+          </header>
+
+          <main>
+            <section className="section" id="features">
+              <div className="container">
+                <div style={{maxWidth:"740px", marginBottom:"28px"}}>
+                  <div className="eyebrow">Feature Breakdown</div>
+                  <h2>Everything you need to run a modern remote hiring motion.</h2>
+                  <p style={{marginTop:"16px"}}>
+                    Built around the actual work: calibrating roles, screening fairly, coordinating interviewers,
+                    and keeping candidates informed without sacrificing speed.
+                  </p>
+                </div>
+                <div className="grid feature-grid">
+                  {features.map(([title, desc], i) => (
+                    <div className="card feature-card" key={title}>
+                      <div className="feature-icon">0{i+1}</div>
+                      <h3>{title}</h3>
+                      <p style={{marginTop:"12px"}}>{desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="section" id="compare">
+              <div className="container">
+                <div style={{maxWidth:"780px", marginBottom:"28px"}}>
+                  <div className="eyebrow">Comparison Table</div>
+                  <h2>Northstar vs. ATS-only workflows and generic hiring tools.</h2>
+                </div>
+                <div className="card compare-table">
+                  <div className="table-head">
+                    <div>Capability</div>
+                    <div>Northstar</div>
+                    <div>ATS only</div>
+                    <div>General HR suite</div>
+                  </div>
+                  {[
+                    ["Timezone-aware remote filtering", "yes", "no", "no"],
+                    ["Async screening with role rubrics", "yes", "no", "partial"],
+                    ["Comp benchmarking by region", "yes", "no", "partial"],
+                    ["Candidate experience pages", "yes", "partial", "partial"],
+                    ["Department-level approvals and audit trail", "yes", "partial", "yes"],
+                    ["Cross-functional hiring analytics", "yes", "no", "partial"]
+                  ].map(([label, a, b, c]) => (
+                    <div className="table-row" key={label}>
+                      <div>{label}</div>
+                      <div className={a === "yes" ? "yes" : "no"}>{a === "yes" ? "Included" : "Limited"}</div>
+                      <div className={b === "yes" ? "yes" : "no"}>{b === "yes" ? "Included" : b === "partial" ? "Partial" : "Missing"}</div>
+                      <div className={c === "yes" ? "yes" : "no"}>{c === "yes" ? "Included" : c === "partial" ? "Partial" : "Missing"}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="section">
+              <div className="container">
+                <div className="eyebrow">Built For Both</div>
+                <h2 style={{marginBottom:"24px"}}>Different buying motion, same hiring backbone.</h2>
+                <div className="grid fit-row">
+                  <div className="card fit-card">
+                    <span className="badge">For startups</span>
+                    <h3 style={{marginTop:"16px"}}>Move from ad hoc founder recruiting to repeatable hiring.</h3>
+                    <ul>
+                      <li>Launch roles with ready-made scorecards and interview kits.</li>
+                      <li>Share candidate packets instead of scattered Slack context.</li>
+                      <li>Keep costs predictable while hiring globally from day one.</li>
+                    </ul>
+                  </div>
+                  <div className="card fit-card">
+                    <span className="badge">For larger companies</span>
+                    <h3 style={{marginTop:"16px"}}>Standardize process without forcing every team into the same mold.</h3>
+                    <ul>
+                      <li>Permissions, approvals, and auditability across business units.</li>
+                      <li>Department-specific workflows with consolidated reporting.</li>
+                      <li>Central recruiting ops with local team autonomy.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="section" id="stories">
+              <div className="container">
+                <div style={{maxWidth:"720px", marginBottom:"28px"}}>
+                  <div className="eyebrow">Customer Stories</div>
+                  <h2>Teams use Northstar differently, but the outcomes rhyme.</h2>
+                </div>
+                <div className="grid story-grid">
+                  {stories.map((story) => (
+                    <div className="card story-card" key={story.title}>
+                      <div className="badge">{story.title}</div>
+                      <div className="quote" style={{marginTop:"20px"}}>{story.quote}</div>
+                      <div className="story-meta">
+                        <p>{story.meta}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="section" id="pricing">
+              <div className="container">
+                <div style={{maxWidth:"760px", marginBottom:"28px"}}>
+                  <div className="eyebrow">Pricing</div>
+                  <h2>Start lean, then add structure when the org needs it.</h2>
+                </div>
+                <div className="grid pricing-grid">
+                  <div className="card price-card">
+                    <div className="badge">Startup</div>
+                    <h3 style={{marginTop:"16px"}}>For founder-led and early talent teams</h3>
+                    <div className="price" style={{marginTop:"18px"}}>$299<span style={{fontSize:"1rem", fontWeight:600}}>/mo</span></div>
+                    <p style={{marginTop:"10px"}}>Up to 5 active roles, async screening, branded pages, scorecards, and weekly pipeline digests.</p>
+                    <ul>
+                      <li>Unlimited hiring managers</li>
+                      <li>Candidate summaries and role templates</li>
+                      <li>Email and Slack notifications</li>
+                      <li>14-day free trial</li>
+                    </ul>
+                    <a className="btn primary" href="#cta" style={{marginTop:"20px", width:"100%"}}>Start startup plan</a>
+                  </div>
+
+                  <div className="card price-card featured">
+                    <div className="badge" style={{background:"rgba(255,255,255,.12)", color:"#fff"}}>Enterprise</div>
+                    <h3 style={{marginTop:"16px"}}>For multi-team, multi-region hiring operations</h3>
+                    <div className="price" style={{marginTop:"18px"}}>Custom</div>
+                    <p style={{marginTop:"10px"}}>Advanced permissions, approvals, analytics, regional policies, ATS sync, SSO, and implementation support.</p>
+                    <ul>
+                      <li>Business unit and brand segmentation</li>
+                      <li>Custom workflows and reporting</li>
+                      <li>Security reviews and procurement support</li>
+                      <li>Priority onboarding</li>
+                    </ul>
+                    <a className="btn secondary" href="#cta" style={{marginTop:"20px", width:"100%", borderColor:"rgba(255,255,255,.18)", color:"#fff"}}>Talk to sales</a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="section" id="faq">
+              <div className="container">
+                <div style={{maxWidth:"700px", marginBottom:"28px"}}>
+                  <div className="eyebrow">FAQ</div>
+                  <h2>Questions that usually come up before teams switch.</h2>
+                </div>
+                <div className="grid">
+                  {faqs.map(([q, a]) => <FAQItem key={q} q={q} a={a} />)}
+                </div>
+              </div>
+            </section>
+
+            <section className="section" id="cta">
+              <div className="container">
+                <div style={{maxWidth:"760px", marginBottom:"28px"}}>
+                  <div className="eyebrow">CTA Variants</div>
+                  <h2>Pick the path that fits how your team buys software.</h2>
+                </div>
+                <div className="grid cta-grid">
+                  <div className="card cta-card">
+                    <span className="badge">Startup CTA</span>
+                    <h3 style={{marginTop:"16px", fontSize:"1.7rem"}}>Need your next five hires, not a six-month implementation?</h3>
+                    <p style={{marginTop:"14px"}}>
+                      Start with templates, async screening, and one clean hiring workspace your founders and managers will actually use.
+                    </p>
+                    <div className="hero-actions">
+                      <a className="btn primary" href="#">Start free trial</a>
+                      <a className="btn secondary" href="#">View startup demo</a>
+                    </div>
+                  </div>
+
+                  <div className="card cta-card">
+                    <span className="badge">Enterprise CTA</span>
+                    <h3 style={{marginTop:"16px", fontSize:"1.7rem"}}>Need consistency, controls, and visibility across distributed hiring teams?</h3>
+                    <p style={{marginTop:"14px"}}>
+                      Book a tailored walkthrough for recruiting ops, HR, procurement, and business leaders evaluating a global remote hiring platform.
+                    </p>
+                    <div className="hero-actions">
+                      <a className="btn primary" href="#">Book enterprise demo</a>
+                      <a className="btn secondary" href="#">Download security overview</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+
+          <footer>
+            <div className="container" style={{display:"flex", justifyContent:"space-between", gap:"16px", flexWrap:"wrap"}}>
+              <div>Northstar Hire</div>
+              <div>Remote hiring software for distributed companies</div>
+            </div>
+          </footer>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pocketlane | Budgeting for Freelancers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;family=Instrument+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f8f1e4;
+      --paper-deep: #efd9b4;
+      --paper-soft: #fffaf2;
+      --ink: #2f2419;
+      --ink-soft: #655546;
+      --line: rgba(47, 36, 25, 0.14);
+      --accent: #cd6d43;
+      --accent-deep: #a84e28;
+      --leaf: #8caa7b;
+      --stamp: #c8443d;
+      --shadow: 0 18px 40px rgba(84, 57, 34, 0.12);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Instrument Sans", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0)) 0 0 / 100% 100%,
+        repeating-linear-gradient(
+          180deg,
+          rgba(47, 36, 25, 0.035) 0,
+          rgba(47, 36, 25, 0.035) 1px,
+          transparent 1px,
+          transparent 38px
+        ),
+        var(--paper);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .page {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 18px auto 40px;
+    }
+
+    .topbar,
+    .hero-note,
+    .ledger,
+    .story-strip,
+    .faq-board,
+    .closing-note {
+      border: 1.5px solid var(--line);
+      background: var(--paper-soft);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      border-radius: 24px 24px 14px 14px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background:
+        linear-gradient(90deg, rgba(239, 217, 180, 0.72), rgba(255, 250, 242, 0.86));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px 18px 12px 16px;
+      background: linear-gradient(160deg, var(--accent), var(--accent-deep));
+      color: #fff6ef;
+      display: grid;
+      place-items: center;
+      font-family: "Fraunces", serif;
+      font-size: 1.35rem;
+      box-shadow: 0 10px 22px rgba(168, 78, 40, 0.22);
+    }
+
+    .top-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      color: var(--ink-soft);
+      font-size: 0.96rem;
+    }
+
+    .small-cta,
+    .main-cta,
+    .alt-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .small-cta {
+      padding: 12px 18px;
+      background: var(--ink);
+      color: #fffaf2;
+    }
+
+    .main-cta {
+      padding: 15px 22px;
+      background: var(--accent);
+      color: #fffaf2;
+      box-shadow: 0 10px 20px rgba(168, 78, 40, 0.18);
+    }
+
+    .alt-cta {
+      padding: 15px 22px;
+      border: 1.5px solid var(--line);
+      background: rgba(255, 250, 242, 0.7);
+      color: var(--ink);
+    }
+
+    .small-cta:hover,
+    .main-cta:hover,
+    .alt-cta:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-note {
+      margin-top: 18px;
+      border-radius: 18px 34px 24px 28px;
+      padding: clamp(24px, 4vw, 42px);
+      position: relative;
+      overflow: clip;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.54), rgba(255, 255, 255, 0)) top right / 42% 44% no-repeat,
+        linear-gradient(180deg, #fffdf8, #fff8ef);
+    }
+
+    .hero-note::before {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      right: -44px;
+      top: -52px;
+      border-radius: 38px;
+      background: rgba(205, 109, 67, 0.11);
+      transform: rotate(18deg);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap: 24px;
+      align-items: start;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      background: rgba(255, 250, 242, 0.88);
+      font-size: 0.92rem;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--leaf);
+      box-shadow: 0 0 0 4px rgba(140, 170, 123, 0.16);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      letter-spacing: -0.04em;
+    }
+
+    h1,
+    h2 {
+      font-family: "Fraunces", serif;
+      line-height: 0.96;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 6.2rem);
+      max-width: 8.5ch;
+    }
+
+    h2 {
+      font-size: clamp(2.1rem, 4vw, 3.6rem);
+    }
+
+    h3 {
+      font-size: 1.12rem;
+      line-height: 1.15;
+    }
+
+    p {
+      margin: 0;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      font-size: 1.02rem;
+    }
+
+    .lead {
+      font-size: clamp(1.08rem, 1.8vw, 1.24rem);
+      max-width: 35ch;
+      margin-top: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .tiny-note {
+      margin-top: 18px;
+      font-size: 0.94rem;
+      color: var(--ink-soft);
+    }
+
+    .receipt {
+      align-self: stretch;
+      border: 1.5px dashed rgba(47, 36, 25, 0.2);
+      border-radius: 20px;
+      padding: 20px;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          transparent 0,
+          transparent 27px,
+          rgba(47, 36, 25, 0.07) 27px,
+          rgba(47, 36, 25, 0.07) 28px
+        ),
+        #fffefb;
+      display: grid;
+      gap: 16px;
+      transform: rotate(2.5deg);
+    }
+
+    .receipt-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .receipt-badge {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stamp);
+      border: 1.5px solid rgba(200, 68, 61, 0.26);
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: rgba(200, 68, 61, 0.07);
+    }
+
+    .line-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: start;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(47, 36, 25, 0.18);
+    }
+
+    .line-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .line-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+
+    .line-item span {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .section-gap {
+      margin-top: 20px;
+    }
+
+    .ledger {
+      margin-top: 18px;
+      border-radius: 28px 18px 24px 20px;
+      padding: clamp(22px, 3vw, 34px);
+      background:
+        linear-gradient(180deg, rgba(239, 217, 180, 0.32), rgba(255, 255, 255, 0)) 0 0 / 100% 92px no-repeat,
+        var(--paper-soft);
+    }
+
+    .section-head {
+      display: grid;
+      gap: 12px;
+      max-width: 44rem;
+    }
+
+    .ledger-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 26px;
+    }
+
+    .ledger-card {
+      border: 1.5px solid var(--line);
+      border-radius: 20px 16px 20px 14px;
+      padding: 20px;
+      background: rgba(255, 250, 242, 0.86);
+    }
+
+    .step {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: rgba(140, 170, 123, 0.18);
+      color: var(--ink);
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .ledger-card p {
+      margin-top: 10px;
+    }
+
+    .story-strip {
+      margin-top: 18px;
+      border-radius: 18px 26px 20px 28px;
+      padding: clamp(22px, 3vw, 34px);
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      align-items: start;
+      background:
+        linear-gradient(90deg, rgba(140, 170, 123, 0.18), rgba(255, 250, 242, 0.8));
+    }
+
+    .story-title {
+      max-width: 16ch;
+    }
+
+    .story-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .story-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px 0;
+      border-top: 1px solid rgba(47, 36, 25, 0.12);
+    }
+
+    .story-row:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      margin-top: 5px;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(205, 109, 67, 0.12);
+    }
+
+    .faq-board {
+      margin-top: 18px;
+      border-radius: 22px;
+      padding: clamp(22px, 3vw, 34px);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .faq-card {
+      border: 1.5px solid var(--line);
+      border-radius: 18px 14px 18px 16px;
+      padding: 18px;
+      background: rgba(255, 250, 242, 0.84);
+    }
+
+    .faq-card p {
+      margin-top: 10px;
+    }
+
+    .closing-note {
+      margin-top: 18px;
+      border-radius: 18px 34px 22px 30px;
+      padding: clamp(24px, 4vw, 40px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      background:
+        linear-gradient(135deg, rgba(205, 109, 67, 0.14), rgba(255, 255, 255, 0));
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      margin-top: 18px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: rise 700ms ease forwards;
+    }
+
+    .reveal.delay-1 { animation-delay: 90ms; }
+    .reveal.delay-2 { animation-delay: 180ms; }
+    .reveal.delay-3 { animation-delay: 270ms; }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+        animation: none;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .topbar,
+      .hero-grid,
+      .story-strip,
+      .closing-note,
+      .ledger-grid,
+      .faq-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        justify-items: start;
+      }
+
+      .top-links {
+        justify-content: start;
+      }
+
+      .receipt {
+        transform: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(var(--max), calc(100% - 18px));
+      }
+
+      .topbar,
+      .hero-note,
+      .ledger,
+      .story-strip,
+      .faq-board,
+      .closing-note {
+        box-shadow: 0 12px 28px rgba(84, 57, 34, 0.1);
+      }
+
+      .hero-actions {
+        display: grid;
+      }
+
+      .small-cta,
+      .main-cta,
+      .alt-cta {
+        width: 100%;
+      }
+
+      h1 {
+        max-width: 9ch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar reveal">
+      <a class="brand" href="#">
+        <span class="brand-mark">P</span>
+        <span>
+          Pocketlane
+        </span>
+      </a>
+
+      <nav class="top-links" aria-label="Primary">
+        <a href="#how-it-works">How it works</a>
+        <a href="#why-it-helps">Why it helps</a>
+        <a href="#questions">Questions</a>
+      </nav>
+
+      <a class="small-cta" href="#start">Try it free</a>
+    </header>
+
+    <section class="hero-note reveal delay-1" id="start">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Made for freelancers who want a calm money routine</div>
+          <h1>See where your money needs to go before it disappears.</h1>
+          <p class="lead">
+            Pocketlane helps freelancers split each payment into simple buckets like take-home pay,
+            taxes, business costs, and savings. You do not need to know accounting words to use it.
+          </p>
+          <div class="hero-actions">
+            <a class="main-cta" href="#how-it-works">See how it works</a>
+            <a class="alt-cta" href="#questions">Read common questions</a>
+          </div>
+          <p class="tiny-note">
+            Start with one income goal, one tax bucket, and one monthly plan. Keep it simple from day one.
+          </p>
+        </div>
+
+        <aside class="receipt" aria-label="Example budget split">
+          <div class="receipt-head">
+            <strong>Friday payment</strong>
+            <span class="receipt-badge">Auto split</span>
+          </div>
+
+          <div class="line-item">
+            <div>
+              <strong>Take-home pay</strong>
+              <p>What you can safely spend for life outside work.</p>
+            </div>
+            <span>$1,800</span>
+          </div>
+
+          <div class="line-item">
+            <div>
+              <strong>Tax bucket</strong>
+              <p>Set money aside early so tax season feels normal.</p>
+            </div>
+            <span>$600</span>
+          </div>
+
+          <div class="line-item">
+            <div>
+              <strong>Business costs</strong>
+              <p>Software, travel, gear, and the little things you forget.</p>
+            </div>
+            <span>$350</span>
+          </div>
+
+          <div class="line-item">
+            <div>
+              <strong>Slow month cushion</strong>
+              <p>A small reserve for late invoices or quieter weeks.</p>
+            </div>
+            <span>$250</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="ledger reveal delay-2" id="how-it-works">
+      <div class="section-head">
+        <h2>A beginner-friendly budget, one step at a time.</h2>
+        <p>
+          Most freelancers do not need a giant finance system. They need a clear answer to three questions:
+          what came in, what needs to be saved, and what is safe to spend.
+        </p>
+      </div>
+
+      <div class="ledger-grid">
+        <article class="ledger-card">
+          <div class="step">1</div>
+          <h3>Connect the money coming in</h3>
+          <p>Add invoices, bank deposits, or manual income. Pocketlane turns your uneven freelance payments into one running view.</p>
+        </article>
+
+        <article class="ledger-card">
+          <div class="step">2</div>
+          <h3>Pick simple budget buckets</h3>
+          <p>Choose basic buckets like taxes, owner pay, tools, and savings. You can start with the suggested setup and adjust later.</p>
+        </article>
+
+        <article class="ledger-card">
+          <div class="step">3</div>
+          <h3>Follow the plan each payday</h3>
+          <p>When a client pays you, Pocketlane shows how much to move into each bucket so you can make the same good choice every time.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="story-strip reveal delay-2" id="why-it-helps">
+      <div>
+        <h2 class="story-title">Why freelancers stick with it</h2>
+      </div>
+
+      <div class="story-list">
+        <div class="story-row">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h3>No finance jargon</h3>
+            <p>The language is plain. You see words like spend, save, taxes, and cushion instead of terms that make you stop and google.</p>
+          </div>
+        </div>
+
+        <div class="story-row">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h3>Built for uneven income</h3>
+            <p>Some months are busy. Some are quiet. The plan changes with your real income instead of pretending your pay is the same every week.</p>
+          </div>
+        </div>
+
+        <div class="story-row">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h3>Helps you feel ready</h3>
+            <p>You can check one screen and quickly see whether rent, taxes, and next month's business costs are already covered.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-board reveal delay-3" id="questions">
+      <div class="section-head">
+        <h2>Questions new freelancers usually ask</h2>
+        <p>
+          The goal is not perfect budgeting. The goal is to stop guessing and build a money habit you can repeat.
+        </p>
+      </div>
+
+      <div class="faq-grid">
+        <article class="faq-card">
+          <h3>What if I do not know my tax rate yet?</h3>
+          <p>Start with a safe percentage and change it later. Saving something now is much better than waiting for the perfect number.</p>
+        </article>
+
+        <article class="faq-card">
+          <h3>Can I use it if I only have a few clients?</h3>
+          <p>Yes. It is useful even if you only send a handful of invoices each month. Small workflows are where simple structure matters most.</p>
+        </article>
+
+        <article class="faq-card">
+          <h3>Do I need to learn bookkeeping first?</h3>
+          <p>No. Pocketlane is built to help you make practical choices first. You can learn the deeper finance details over time if you want.</p>
+        </article>
+
+        <article class="faq-card">
+          <h3>What happens in a slow month?</h3>
+          <p>The cushion bucket helps you plan for that. Pocketlane also shows a lighter spending target when income drops, so the change is visible early.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="closing-note reveal delay-3">
+      <div>
+        <h2>Give every payment a job before your inbox gets busy again.</h2>
+        <p class="section-gap">
+          Pocketlane makes budgeting feel less like a spreadsheet project and more like a weekly habit you can actually keep.
+        </p>
+      </div>
+
+      <a class="main-cta" href="#start">Start your first budget</a>
+    </section>
+
+    <p class="footer-note">Pocketlane is a fictional product page created as a standalone landing-page sample.</p>
+  </main>
+</body>
+</html>

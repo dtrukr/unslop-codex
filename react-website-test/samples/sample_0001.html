@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northline Supply</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root{
+      --bg:#f2eadf;
+      --paper:#fbf7f1;
+      --forest:#21382c;
+      --moss:#587156;
+      --clay:#a76843;
+      --sand:#d8c3a8;
+      --ink:#162019;
+      --muted:#6e756c;
+      --line:rgba(22,32,25,.12);
+      --shadow:0 20px 50px rgba(33,56,44,.12);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at top right, rgba(167,104,67,.16), transparent 28%),
+        radial-gradient(circle at left 20%, rgba(88,113,86,.15), transparent 24%),
+        var(--bg);
+      color:var(--ink);
+      font-family:"Manrope",system-ui,sans-serif;
+    }
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    .shell{width:min(1120px,calc(100% - 28px));margin:0 auto}
+    .nav{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter:blur(14px);
+      background:rgba(242,234,223,.8);
+      border-bottom:1px solid var(--line);
+    }
+    .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 0;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:.02em;
+    }
+    .brand-mark{
+      width:38px;height:38px;border-radius:14px;
+      background:linear-gradient(135deg,var(--forest),var(--moss));
+      color:#fff;display:grid;place-items:center;font-size:15px;
+      box-shadow:var(--shadow);
+    }
+    .nav-links{display:none;gap:22px;color:var(--muted);font-weight:700}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      border:none;border-radius:999px;padding:14px 20px;
+      font-weight:800;font-family:"Space Grotesk",sans-serif;
+      transition:.2s ease;cursor:pointer;
+    }
+    .btn-primary{background:var(--forest);color:#fff}
+    .btn-primary:hover{transform:translateY(-1px);background:#17281f}
+    .btn-secondary{background:transparent;color:var(--forest);border:1px solid var(--line)}
+    .hero{padding:34px 0 22px}
+    .hero-grid{display:grid;gap:20px}
+    .card{
+      background:rgba(251,247,241,.86);
+      border:1px solid rgba(22,32,25,.08);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero-copy{padding:28px}
+    .eyebrow{
+      display:inline-flex;gap:8px;align-items:center;
+      background:rgba(88,113,86,.12);color:var(--forest);
+      padding:8px 12px;border-radius:999px;font-size:12px;font-weight:800;
+      letter-spacing:.08em;text-transform:uppercase;
+    }
+    h1,h2,h3{font-family:"Space Grotesk",sans-serif;line-height:.95;margin:0}
+    h1{font-size:clamp(2.8rem,10vw,6.5rem);letter-spacing:-.05em;margin:16px 0}
+    h2{font-size:clamp(2rem,6vw,3.6rem);letter-spacing:-.04em}
+    h3{font-size:1.35rem;letter-spacing:-.03em}
+    p{line-height:1.6;margin:0}
+    .lede{
+      font-size:1.05rem;color:var(--muted);max-width:36rem;margin-bottom:24px;
+    }
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+    .stats{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+    }
+    .stat{
+      padding:14px;border-radius:18px;background:var(--paper);border:1px solid var(--line);
+    }
+    .stat strong{
+      display:block;font-family:"Space Grotesk",sans-serif;font-size:1.35rem
+    }
+    .hero-visual{
+      min-height:460px;padding:20px;position:relative;overflow:hidden;
+      background:
+        linear-gradient(160deg, rgba(33,56,44,.94), rgba(88,113,86,.88)),
+        #314e3d;
+      color:#fff;
+    }
+    .hero-badge{
+      position:absolute;top:18px;right:18px;background:rgba(255,255,255,.13);
+      border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:999px;
+      font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    }
+    .terrain{
+      position:absolute;inset:auto -8% -20% -8%;height:58%;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.08), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,0), rgba(0,0,0,.08)),
+        linear-gradient(180deg, #7d966f 0%, #4d654e 50%, #2b4032 100%);
+      clip-path:polygon(0 58%,12% 48%,25% 56%,40% 34%,52% 43%,68% 22%,80% 35%,100% 18%,100% 100%,0 100%);
+      opacity:.95;
+    }
+    .pack{
+      position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);
+      width:min(270px,70vw);aspect-ratio:4/5;border-radius:36px 36px 28px 28px;
+      background:linear-gradient(180deg,#d6ba96,#b98e65);
+      box-shadow:0 30px 60px rgba(0,0,0,.24);
+    }
+    .pack:before,.pack:after{content:"";position:absolute;background:#8a5b3c}
+    .pack:before{
+      inset:10% 22% auto 22%;height:16%;border-radius:24px 24px 14px 14px;
+      background:linear-gradient(180deg,#9f6f4a,#7e5034);
+    }
+    .pack:after{
+      left:50%;top:-6%;transform:translateX(-50%);width:44%;height:12%;
+      border-radius:999px;background:#35533f;
+    }
+    .strap,.strap2,.pocket{
+      position:absolute;background:#2b4032;border-radius:18px;
+    }
+    .strap{left:8%;top:18%;width:12%;height:58%}
+    .strap2{right:8%;top:18%;width:12%;height:58%}
+    .pocket{left:22%;right:22%;bottom:12%;height:18%;background:#c48f61}
+    .visual-copy{
+      position:absolute;left:20px;bottom:22px;right:20px;z-index:2;
+      display:flex;justify-content:space-between;gap:12px;align-items:end;
+    }
+    .visual-copy p{max-width:16rem;color:rgba(255,255,255,.8);font-size:.95rem}
+    section{padding:22px 0}
+    .section-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:18px}
+    .section-head p{max-width:38rem;color:var(--muted)}
+    .story-grid,.collection-grid,.reviews,.about-grid,.signup{
+      display:grid;gap:16px;
+    }
+    .story-card,.collection-card,.review,.about-card,.signup-card{
+      padding:22px;
+    }
+    .story-card{
+      background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.08)),var(--paper);
+    }
+    .kicker{font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--clay);margin-bottom:10px}
+    .story-points,.review-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .chip{
+      padding:10px 12px;border-radius:999px;background:#efe4d6;border:1px solid rgba(22,32,25,.06);
+      font-size:.9rem;font-weight:700;color:var(--forest);
+    }
+    .collection-card{
+      overflow:hidden;padding:0;background:var(--paper);
+    }
+    .collection-media{
+      height:210px;padding:18px;display:flex;align-items:flex-end;position:relative;color:#fff;
+    }
+    .tone-1{background:linear-gradient(160deg,#344f3f,#8c9d66)}
+    .tone-2{background:linear-gradient(160deg,#6f4d34,#d9a86f)}
+    .tone-3{background:linear-gradient(160deg,#425845,#95a885)}
+    .mock-gear{
+      width:100%;height:120px;border-radius:24px;background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px);
+      position:relative;
+    }
+    .mock-gear:before,.mock-gear:after{content:"";position:absolute;border-radius:20px;background:rgba(255,255,255,.18)}
+    .mock-gear:before{left:16px;bottom:16px;width:34%;height:44px}
+    .mock-gear:after{right:16px;top:16px;width:26%;height:72px}
+    .collection-copy{padding:18px}
+    .meta{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:var(--muted);font-weight:700}
+    .review{
+      background:linear-gradient(180deg,#fffdf9,#f5ede2);
+    }
+    .stars{letter-spacing:.15em;color:var(--clay);font-size:1rem;margin-bottom:14px}
+    .review-author{margin-top:14px;font-weight:800;color:var(--forest)}
+    .signup-card{
+      background:linear-gradient(135deg,var(--forest),#2d4937 62%, var(--moss));
+      color:#fff;position:relative;overflow:hidden;
+    }
+    .signup-card:after{
+      content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;
+      background:rgba(255,255,255,.08);
+    }
+    .form{
+      display:flex;flex-direction:column;gap:12px;margin-top:20px;position:relative;z-index:1;
+    }
+    .input{
+      width:100%;padding:15px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.1);color:#fff;font:inherit;
+    }
+    .input::placeholder{color:rgba(255,255,255,.72)}
+    .tiny{font-size:.9rem;color:rgba(255,255,255,.78);margin-top:10px}
+    .about-card{
+      background:linear-gradient(180deg,rgba(88,113,86,.12),rgba(255,255,255,.18)),var(--paper);
+    }
+    .about-strip{
+      margin-top:18px;padding-top:18px;border-top:1px solid var(--line);
+      display:grid;gap:12px;
+    }
+    footer{
+      padding:20px 0 36px;color:var(--muted);font-size:.95rem;
+    }
+    .footer-row{
+      display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid var(--line);
+    }
+
+    @media (min-width: 760px){
+      .nav-links{display:flex}
+      .hero{padding:40px 0 28px}
+      .hero-grid{grid-template-columns:1.05fr .95fr}
+      .story-grid{grid-template-columns:repeat(3,1fr)}
+      .collection-grid{grid-template-columns:repeat(3,1fr)}
+      .reviews{grid-template-columns:repeat(3,1fr)}
+      .about-grid{grid-template-columns:1.15fr .85fr}
+      .signup{grid-template-columns:1fr}
+      .form{grid-template-columns:1.2fr auto;align-items:center}
+      .footer-row{flex-direction:row;justify-content:space-between;align-items:center}
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const collections = [
+      {
+        title: "Trail Packs",
+        blurb: "Light on your back, heavy on smart details. Recycled nylon shells, modular pockets, all-day carry comfort.",
+        meta: "From $98",
+        tone: "tone-1"
+      },
+      {
+        title: "Camp Essentials",
+        blurb: "Compact organizers, insulated food kits, and weather-ready accessories built to survive weekends that turn into Mondays.",
+        meta: "Top-rated",
+        tone: "tone-2"
+      },
+      {
+        title: "Everyday Outside",
+        blurb: "Gear that moves from city bike lane to coastal trail without looking like borrowed expedition equipment.",
+        meta: "New drop",
+        tone: "tone-3"
+      }
+    ];
+
+    const reviews = [
+      {
+        quote: "Finally found gear that feels designed for real life, not just glossy summit photos. My pack handles classes, train rides, and trail days without looking trashed.",
+        name: "Maya, 24",
+        tag: "Portland"
+      },
+      {
+        quote: "Northline actually backs up the sustainability talk. Repairable parts, recycled fabrics, and it still feels premium instead of preachy.",
+        name: "Eli, 27",
+        tag: "Denver"
+      },
+      {
+        quote: "I bought the day kit for a weekend trip and ended up using it every day. Clean shape, tough fabric, zero throwaway vibes.",
+        name: "Rin, 22",
+        tag: "Vancouver"
+      }
+    ];
+
+    function App() {
+      return (
+        <>
+          <nav className="nav">
+            <div className="shell nav-inner">
+              <a href="#" className="brand" aria-label="Northline Supply home">
+                <span className="brand-mark">NS</span>
+                <span>Northline Supply</span>
+              </a>
+              <div className="nav-links">
+                <a href="#story">Story</a>
+                <a href="#collections">Collections</a>
+                <a href="#reviews">Reviews</a>
+                <a href="#about">About</a>
+              </div>
+              <a className="btn btn-secondary" href="#signup">Join the List</a>
+            </div>
+          </nav>
+
+          <main>
+            <section className="hero">
+              <div className="shell hero-grid">
+                <div className="card hero-copy">
+                  <span className="eyebrow">Built for the long way around</span>
+                  <h1>Gear for younger explorers who pack light and tread lighter.</h1>
+                  <p className="lede">
+                    Northline Supply makes durable travel gear from recycled and responsibly sourced materials, so you can chase trailheads, surf checks, and weekend escapes without carrying the guilt of disposable outdoor culture.
+                  </p>
+                  <div className="hero-actions">
+                    <a className="btn btn-primary" href="#collections">Shop Featured Gear</a>
+                    <a className="btn btn-secondary" href="#story">See Our Materials</a>
+                  </div>
+                  <div className="stats">
+                    <div className="stat">
+                      <strong>82%</strong>
+                      <span>recycled content across our core line</span>
+                    </div>
+                    <div className="stat">
+                      <strong>3-year</strong>
+                      <span>repair-first warranty on daily-use gear</span>
+                    </div>
+                    <div className="stat">
+                      <strong>1%</strong>
+                      <span>of revenue supports trail restoration</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="card hero-visual">
+                  <div className="hero-badge">Low impact / high mileage</div>
+                  <div className="pack">
+                    <div className="strap"></div>
+                    <div className="strap2"></div>
+                    <div className="pocket"></div>
+                  </div>
+                  <div className="terrain"></div>
+                  <div className="visual-copy">
+                    <h3>Made to outlast trends.</h3>
+                    <p>Clean silhouettes, weather-tough materials, and practical features you will still want in five years.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="story">
+              <div className="shell">
+                <div className="section-head">
+                  <div>
+                    <div className="kicker">Product story</div>
+                    <h2>Better gear starts with slower, smarter choices.</h2>
+                  </div>
+                  <p>
+                    We design fewer pieces, refine them harder, and choose materials that keep waste down without compromising the fun part: getting outside more often.
+                  </p>
+                </div>
+
+                <div className="story-grid">
+                  <div className="card story-card">
+                    <h3>Recycled fabrics that still feel rugged</h3>
+                    <p>From post-consumer nylon to bluesign-approved finishes, our shells are built to handle rain, grit, and overstuffed bus racks.</p>
+                    <div className="story-points">
+                      <span className="chip">PFAS-free coatings</span>
+                      <span className="chip">Recycled webbing</span>
+                    </div>
+                  </div>
+                  <div className="card story-card">
+                    <h3>Repair-friendly construction</h3>
+                    <p>Replaceable pulls, reinforced stress points, and timeless colorways mean your favorite pack stays in rotation instead of in landfill.</p>
+                    <div className="story-points">
+                      <span className="chip">Modular trims</span>
+                      <span className="chip">Field-tested seams</span>
+                    </div>
+                  </div>
+                  <div className="card story-card">
+                    <h3>Designed for daily escape velocity</h3>
+                    <p>Whether it is a sunrise hike before work or a budget flight with one carry-on, Northline gear keeps things organized, durable, and ready to move.</p>
+                    <div className="story-points">
+                      <span className="chip">Carry-on sized</span>
+                      <span className="chip">Bike-to-trail ready</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="collections">
+              <div className="shell">
+                <div className="section-head">
+                  <div>
+                    <div className="kicker">Featured collections</div>
+                    <h2>Purpose-built pieces for weekends that refuse to stay ordinary.</h2>
+                  </div>
+                </div>
+
+                <div className="collection-grid">
+                  {collections.map((item) => (
+                    <article key={item.title} className="card collection-card">
+                      <div className={`collection-media ${item.tone}`}>
+                        <div className="mock-gear"></div>
+                      </div>
+                      <div className="collection-copy">
+                        <h3>{item.title}</h3>
+                        <p>{item.blurb}</p>
+                        <div className="meta">
+                          <span>{item.meta}</span>
+                          <span>Explore</span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section id="reviews">
+              <div className="shell">
+                <div className="section-head">
+                  <div>
+                    <div className="kicker">Customer reviews</div>
+                    <h2>Trusted by people who actually use their gear hard.</h2>
+                  </div>
+                  <p>
+                    Students, creatives, climbers, commuters, and campfire regulars keep coming back for one reason: the gear works and the values hold up.
+                  </p>
+                </div>
+
+                <div className="reviews">
+                  {reviews.map((review) => (
+                    <article key={review.name} className="card review">
+                      <div className="stars">★★★★★</div>
+                      <p>{review.quote}</p>
+                      <div className="review-author">{review.name}</div>
+                      <div className="review-tags">
+                        <span className="chip">{review.tag}</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section id="signup">
+              <div className="shell signup">
+                <div className="card signup-card">
+                  <div className="kicker" style={{color:"#d8c3a8"}}>Email signup</div>
+                  <h2>Get first access to new drops, repair clinics, and trail-minded stories.</h2>
+                  <p style={{marginTop:"14px", maxWidth:"38rem", color:"rgba(255,255,255,.82)"}}>
+                    Join the Northline list for launch alerts, field notes, and occasional perks. No spam. No fake scarcity. Just better reasons to get outside.
+                  </p>
+                  <form className="form" onSubmit={(e) => e.preventDefault()}>
+                    <input className="input" type="email" placeholder="Enter your email" aria-label="Email address" />
+                    <button className="btn btn-primary" type="submit" style={{background:"#d8c3a8", color:"#1f3025"}}>Sign Me Up</button>
+                  </form>
+                  <div className="tiny">By joining, you agree to occasional emails and a refreshingly low tolerance for waste.</div>
+                </div>
+              </div>
+            </section>
+
+            <section id="about">
+              <div className="shell about-grid">
+                <div className="card about-card">
+                  <div className="kicker">About page preview</div>
+                  <h2>Northline started with one question: why does “outdoor gear” so often feel disposable?</h2>
+                  <p style={{marginTop:"16px", color:"var(--muted)"}}>
+                    We are a small team of hikers, cyclists, and habitual overpackers building a brand around longevity, lower-impact materials, and fewer, better things. The goal is simple: make gear young adventurers are proud to carry and proud to keep.
+                  </p>
+                  <div className="about-strip">
+                    <div><strong>Design ethos:</strong> Functional silhouettes, clear organization, and understated style that works far beyond the campsite.</div>
+                    <div><strong>Material standard:</strong> Recycled where possible, renewable where practical, and always chosen for long-term wear.</div>
+                  </div>
+                </div>
+
+                <div className="card about-card">
+                  <div className="kicker">Why it matters</div>
+                  <h3 style={{marginBottom:"12px"}}>Less throwaway culture. More weekends worth remembering.</h3>
+                  <p style={{color:"var(--muted)"}}>
+                    Younger travelers want brands that match their values without losing style, performance, or price sanity. Northline exists for that exact balance.
+                  </p>
+                  <div className="story-points" style={{marginTop:"20px"}}>
+                    <span className="chip">Small-batch releases</span>
+                    <span className="chip">Repair over replace</span>
+                    <span className="chip">Honest sourcing</span>
+                    <span className="chip">Modern outdoor style</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+
+          <footer>
+            <div className="shell footer-row">
+              <div><strong>Northline Supply</strong> • Eco-friendly travel gear for the next generation of outdoors.</div>
+              <div>Story • Collections • Reviews • About</div>
+            </div>
+          </footer>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

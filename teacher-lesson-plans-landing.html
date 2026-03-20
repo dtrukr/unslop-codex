@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chalkline | Lesson Plans in Minutes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: oklch(97% 0.02 92);
+      --paper-strong: oklch(93% 0.04 91);
+      --ink: oklch(27% 0.03 250);
+      --muted: oklch(44% 0.03 250);
+      --rule: oklch(78% 0.03 85);
+      --peach: oklch(76% 0.13 46);
+      --gold: oklch(84% 0.11 88);
+      --sage: oklch(76% 0.08 145);
+      --slate: oklch(40% 0.05 238);
+      --shadow: 0 18px 50px rgba(72, 58, 35, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Instrument Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(230, 163, 97, 0.22), transparent 30%),
+        linear-gradient(180deg, var(--paper) 0%, #f6efdf 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.88rem;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px 14px 14px 4px;
+      background: linear-gradient(145deg, var(--peach), var(--gold));
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+      font-family: "Fraunces", serif;
+      font-size: 1.2rem;
+    }
+
+    .topbar a:last-child {
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 2px;
+      font-size: 0.95rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+      gap: 28px;
+      padding-top: 28px;
+      align-items: start;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 20px;
+    }
+
+    .kicker {
+      font-size: 0.85rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 10ch;
+      font-family: "Fraunces", serif;
+      font-size: clamp(3.4rem, 9vw, 6.8rem);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-copy p {
+      margin: 0;
+      max-width: 38rem;
+      font-size: clamp(1.05rem, 2vw, 1.2rem);
+      line-height: 1.65;
+      color: var(--slate);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .primary-link,
+    .secondary-link {
+      padding: 14px 18px;
+      font-weight: 600;
+      transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+    }
+
+    .primary-link {
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .secondary-link {
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .primary-link:hover,
+    .secondary-link:hover {
+      transform: translateY(-2px);
+    }
+
+    .snapshot {
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.62), rgba(242,228,198,0.9));
+      border: 1px solid rgba(111, 90, 56, 0.18);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .snapshot::before {
+      content: "Tuesday, 7:12 PM";
+      justify-self: start;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(111, 90, 56, 0.16);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .sheet {
+      background: rgba(255, 251, 244, 0.94);
+      border: 1px solid rgba(111, 90, 56, 0.16);
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .sheet h2,
+    .sheet p {
+      margin: 0;
+    }
+
+    .sheet h2 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .sheet p {
+      color: var(--slate);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .lesson-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .lesson-grid div {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(111, 90, 56, 0.16);
+      font-size: 0.92rem;
+    }
+
+    .lesson-grid strong {
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .strip article {
+      padding: 16px 0 0;
+      border-top: 2px solid var(--ink);
+    }
+
+    .strip strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .strip span {
+      color: var(--slate);
+      line-height: 1.55;
+    }
+
+    .closing {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      margin-top: 42px;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .closing p {
+      margin: 0;
+      max-width: 34rem;
+      color: var(--slate);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .strip,
+      .closing {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .closing {
+        align-items: start;
+      }
+
+      h1 {
+        max-width: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .primary-link,
+      .secondary-link {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="#">
+        <span class="brand-mark">C</span>
+        <span>Chalkline</span>
+      </a>
+      <a href="#start">Start Free</a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="kicker">Built for busy teachers</span>
+        <h1>Plan tomorrow’s lesson before today’s coffee gets cold.</h1>
+        <p>
+          Chalkline turns a topic, grade level, and time block into a ready-to-teach lesson plan with objectives,
+          activities, differentiation, and exit tickets in minutes instead of hours.
+        </p>
+        <div class="cta-row">
+          <a class="primary-link" href="#start">Generate a lesson plan</a>
+          <a class="secondary-link" href="#details">See what it writes</a>
+        </div>
+      </div>
+
+      <aside class="snapshot" id="details">
+        <div class="sheet">
+          <h2>4th Grade Science</h2>
+          <p>Topic: food chains · Duration: 45 min · Goal: explain producer and consumer roles.</p>
+          <div class="lesson-grid">
+            <div><strong>Warm-up</strong><span>Quick sorting prompt using plants, rabbits, and hawks.</span></div>
+            <div><strong>Mini lesson</strong><span>Simple teacher script plus board notes and key vocabulary.</span></div>
+            <div><strong>Activity</strong><span>Partner card sort with a scaffolded version for emerging readers.</span></div>
+            <div><strong>Exit ticket</strong><span>Two short questions aligned to the objective.</span></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="strip">
+      <article>
+        <strong>Less formatting, more teaching</strong>
+        <span>Every plan arrives organized and editable, so you can adjust it instead of starting from a blank page.</span>
+      </article>
+      <article>
+        <strong>Made for real classrooms</strong>
+        <span>Include standards, accommodations, group work, homework, and materials with a single prompt.</span>
+      </article>
+      <article>
+        <strong>Fast enough for weeknights</strong>
+        <span>Draft Monday through Friday in one sitting, then reuse what works across future units.</span>
+      </article>
+    </section>
+
+    <footer class="closing" id="start">
+      <p>Teachers use Chalkline to cut planning time and keep lesson quality high, even on the weeks that run sideways.</p>
+      <a class="primary-link" href="mailto:hello@chalkline.app">Request early access</a>
+    </footer>
+  </main>
+</body>
+</html>

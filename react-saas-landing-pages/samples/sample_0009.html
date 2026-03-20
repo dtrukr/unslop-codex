@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verdant Ledger | Carbon Reporting for Finance Teams</title>
+  <meta
+    name="description"
+    content="Verdant Ledger helps finance teams automate carbon reporting, improve audit readiness, and turn sustainability data into enterprise ROI."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f6f1;
+      --surface: rgba(255, 255, 255, 0.72);
+      --surface-strong: #ffffff;
+      --surface-soft: #eef2ea;
+      --text: #142017;
+      --muted: #55645a;
+      --line: rgba(20, 32, 23, 0.09);
+      --line-strong: rgba(20, 32, 23, 0.18);
+      --brand: #1f7a45;
+      --brand-2: #b8d9ba;
+      --brand-3: #dff1e0;
+      --shadow: 0 24px 80px rgba(26, 41, 28, 0.10);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(184, 217, 186, 0.35), transparent 35%),
+        radial-gradient(circle at 100% 20%, rgba(223, 241, 224, 0.7), transparent 30%),
+        linear-gradient(180deg, #fbfcf9 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .page-shell {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .page-shell::before,
+    .page-shell::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(70px);
+      z-index: -1;
+      opacity: 0.55;
+    }
+
+    .page-shell::before {
+      width: 420px;
+      height: 420px;
+      left: -120px;
+      top: 80px;
+      background: rgba(184, 217, 186, 0.8);
+    }
+
+    .page-shell::after {
+      width: 320px;
+      height: 320px;
+      right: -80px;
+      top: 260px;
+      background: rgba(218, 230, 198, 0.8);
+    }
+
+    .container {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, var(--brand) 0%, #0f4f2b 100%);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .mono {
+      font-family: "IBM Plex Mono", monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .hero {
+      padding: 32px 0 54px;
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+    }
+
+    .hero-copy {
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 600px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(31, 122, 69, 0.08);
+      border: 1px solid rgba(31, 122, 69, 0.10);
+      color: var(--brand);
+      font-size: 0.82rem;
+      width: fit-content;
+      margin-bottom: 18px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(2.7rem, 5vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 12ch;
+    }
+
+    .lead {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+      max-width: 58ch;
+    }
+
+    .hero-actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--brand) 0%, #145931 100%);
+      color: white;
+      box-shadow: 0 14px 30px rgba(31, 122, 69, 0.28);
+    }
+
+    .button-secondary {
+      background: rgba(255,255,255,0.65);
+      color: var(--text);
+      border-color: var(--line);
+    }
+
+    .hero-metrics {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--line);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.5rem;
+      letter-spacing: -0.05em;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .hero-card {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      min-height: 600px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.72)),
+        linear-gradient(145deg, rgba(223, 241, 224, 0.4), transparent);
+    }
+
+    .dashboard {
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+      height: 100%;
+    }
+
+    .dash-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .kpi {
+      padding: 14px;
+      background: var(--surface-soft);
+      border-radius: 18px;
+      border: 1px solid rgba(20, 32, 23, 0.05);
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 1.7rem;
+      letter-spacing: -0.05em;
+      margin-top: 6px;
+    }
+
+    .chart {
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #f6f8f4 0%, #edf3ed 100%);
+      border: 1px solid var(--line);
+    }
+
+    .bars {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: end;
+      gap: 10px;
+      height: 170px;
+      margin-top: 18px;
+    }
+
+    .bar {
+      border-radius: 16px 16px 6px 6px;
+      background: linear-gradient(180deg, #2a8b50 0%, #8bc499 100%);
+      position: relative;
+      min-height: 20px;
+      animation: rise 900ms ease both;
+      animation-delay: calc(var(--i) * 90ms);
+    }
+
+    .bar::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .signal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .signal {
+      padding: 16px;
+      border-radius: 18px;
+      background: #fcfdfb;
+      border: 1px solid var(--line);
+    }
+
+    .signal .pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(31, 122, 69, 0.08);
+      color: var(--brand);
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+    }
+
+    .section {
+      padding: 28px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      max-width: 58ch;
+      line-height: 1.7;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      max-width: 11ch;
+    }
+
+    .grid-3, .grid-2 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .feature {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 38px rgba(31, 40, 27, 0.06);
+    }
+
+    .feature-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      background: linear-gradient(145deg, var(--brand-3), #ffffff);
+      color: var(--brand);
+      border: 1px solid rgba(31, 122, 69, 0.10);
+      font-weight: 800;
+    }
+
+    .feature p,
+    .quote p,
+    .workflow p,
+    .cta p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-top: 10px;
+    }
+
+    .workflow {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(250,252,247,0.92));
+      border: 1px solid var(--line);
+    }
+
+    .step {
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .step:first-of-type { border-top: 0; padding-top: 0; }
+
+    .step-index {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: var(--text);
+      color: white;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .quote {
+      padding: 26px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, #18241a 0%, #243328 100%);
+      color: white;
+      min-height: 100%;
+    }
+
+    .quote p {
+      color: rgba(255,255,255,0.76);
+    }
+
+    .quote strong {
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1.4;
+      letter-spacing: -0.04em;
+    }
+
+    .quote-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.86);
+    }
+
+    .cta {
+      margin: 28px 0 40px;
+      padding: 32px;
+      border-radius: 32px;
+      background:
+        linear-gradient(140deg, rgba(16, 32, 20, 0.97), rgba(28, 60, 37, 0.96)),
+        linear-gradient(180deg, #17301d, #17301d);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 28px 70px rgba(20, 32, 23, 0.22);
+    }
+
+    .cta h2 {
+      max-width: 13ch;
+    }
+
+    .cta p {
+      color: rgba(255,255,255,0.76);
+      max-width: 54ch;
+    }
+
+    .footer {
+      padding: 16px 0 36px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.92rem;
+    }
+
+    @keyframes rise {
+      from { transform: scaleY(0.3); transform-origin: bottom; opacity: 0.3; }
+      to { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid-3,
+      .grid-2,
+      .cta {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .hero-copy,
+      .hero-card {
+        min-height: auto;
+      }
+
+      .nav-links a:nth-child(-n+3) { display: none; }
+
+      .section-head {
+        flex-direction: column;
+        align-items: start;
+      }
+
+      .cta {
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-copy,
+      .hero-card,
+      .feature,
+      .workflow,
+      .quote,
+      .cta {
+        padding: 22px;
+      }
+
+      .hero-metrics,
+      .signal-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 2.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const navLinks = ["Platform", "Outcomes", "Security", "Pricing"];
+    const metrics = [
+      { value: "68%", label: "faster monthly close for emissions data" },
+      { value: "3.4x", label: "higher audit readiness across entities" },
+      { value: "$1.2M", label: "average annual reporting efficiency gain" },
+    ];
+
+    const features = [
+      {
+        icon: "01",
+        title: "Finance-native carbon close",
+        text: "Sync GL, AP, ERP, and utility data into one controlled reporting layer built for the cadence and rigor finance teams already own.",
+      },
+      {
+        icon: "02",
+        title: "Board-ready disclosures",
+        text: "Generate scope summaries, methodology notes, and assurance trails that hold up in investor updates, audits, and regulatory reviews.",
+      },
+      {
+        icon: "03",
+        title: "ROI, not just reporting",
+        text: "Connect emissions drivers to cost centers, supplier spend, and abatement scenarios so sustainability decisions translate into margin impact.",
+      },
+    ];
+
+    const steps = [
+      {
+        title: "Ingest operational and financial activity",
+        text: "Connect source systems once, normalize emissions factors automatically, and keep a traceable data lineage from invoice to disclosure.",
+      },
+      {
+        title: "Review variances with built-in controls",
+        text: "Flag unusual swings, assign approvals, and lock reporting periods so teams move faster without weakening governance.",
+      },
+      {
+        title: "Publish with confidence",
+        text: "Deliver investor-grade dashboards, audit packs, and reusable disclosure outputs without stitching spreadsheets together at quarter-end.",
+      },
+    ];
+
+    function Logo() {
+      return (
+        <a className="brand" href="#top" aria-label="Verdant Ledger home">
+          <span className="brand-mark" aria-hidden="true">V</span>
+          <span>Verdant Ledger</span>
+        </a>
+      );
+    }
+
+    function Button({ href, children, variant = "primary" }) {
+      return (
+        <a
+          href={href}
+          className={`button ${variant === "primary" ? "button-primary" : "button-secondary"}`}
+        >
+          {children}
+        </a>
+      );
+    }
+
+    function FeatureCard({ icon, title, text }) {
+      return (
+        <article className="feature">
+          <div className="feature-icon" aria-hidden="true">{icon}</div>
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </article>
+      );
+    }
+
+    function App() {
+      return (
+        <div className="page-shell" id="top">
+          <header className="container nav">
+            <Logo />
+            <nav className="nav-links" aria-label="Primary navigation">
+              {navLinks.map((item) => (
+                <a key={item} href={`#${item.toLowerCase()}`}>{item}</a>
+              ))}
+              <Button href="#demo" variant="secondary">Book a Demo</Button>
+            </nav>
+          </header>
+
+          <main className="container">
+            <section className="hero" aria-labelledby="hero-title">
+              <div className="panel hero-copy">
+                <div>
+                  <div className="eyebrow mono">Carbon reporting for modern finance teams</div>
+                  <h1 id="hero-title">Close carbon with the same discipline as cash.</h1>
+                  <p className="lead">
+                    Replace spreadsheet-heavy sustainability reporting with a finance-grade workflow that cuts reporting time,
+                    improves assurance readiness, and surfaces the ROI behind every decarbonization decision.
+                  </p>
+                  <div className="hero-actions">
+                    <Button href="#demo">See the Platform</Button>
+                    <Button href="#outcomes" variant="secondary">Explore Outcomes</Button>
+                  </div>
+                </div>
+
+                <div className="hero-metrics" aria-label="Key outcomes">
+                  {metrics.map((item) => (
+                    <div key={item.label} className="metric">
+                      <strong>{item.value}</strong>
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <aside className="panel hero-card" aria-label="Product overview">
+                <div className="dashboard">
+                  <div className="dash-top">
+                    <div>
+                      <div className="mono" style={{ color: "var(--muted)", fontSize: ".85rem" }}>Q2 carbon close</div>
+                      <h3 style={{ marginTop: 6 }}>Consolidated reporting</h3>
+                    </div>
+                    <div className="kpi">
+                      <div className="mono" style={{ color: "var(--muted)", fontSize: ".76rem" }}>Assurance score</div>
+                      <strong>94%</strong>
+                    </div>
+                  </div>
+
+                  <div className="chart" role="img" aria-label="Emissions trend chart by quarter">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <strong>Emissions intensity trend</strong>
+                      <span className="mono" style={{ color: "var(--brand)", fontSize: ".83rem" }}>-18.6% YoY</span>
+                    </div>
+                    <div className="bars">
+                      {[82, 74, 69, 60, 54, 47].map((height, i) => (
+                        <div
+                          key={i}
+                          className="bar"
+                          style={{ height: `${height}%`, ["--i"]: i }}
+                          data-label={`Q${i + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="signal-grid">
+                    <div className="signal">
+                      <span className="pill mono">Material variance</span>
+                      <h3>Supplier emissions up 9.2%</h3>
+                      <p>Trace the increase to two procurement categories and quantify the cost of each mitigation path.</p>
+                    </div>
+                    <div className="signal">
+                      <span className="pill mono">Finance workflow</span>
+                      <h3>Close in 6 days</h3>
+                      <p>Approval routing, evidence locks, and period controls keep reporting aligned with your financial close calendar.</p>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </section>
+
+            <section className="section" id="outcomes" aria-labelledby="outcomes-title">
+              <div className="section-head">
+                <div>
+                  <div className="eyebrow mono">Enterprise outcomes</div>
+                  <h2 id="outcomes-title">Built for audit pressure, investor scrutiny, and CFO expectations.</h2>
+                </div>
+                <p>
+                  Sustainability data rarely fails because of ambition. It fails because finance inherits fragmented systems,
+                  weak controls, and no clean link to enterprise value. Verdant Ledger fixes that operating model.
+                </p>
+              </div>
+              <div className="grid-3">
+                {features.map((feature) => (
+                  <FeatureCard key={feature.title} {...feature} />
+                ))}
+              </div>
+            </section>
+
+            <section className="section grid-2" id="platform" aria-label="Workflow and testimonial">
+              <div className="workflow">
+                <div className="eyebrow mono">From source data to signed-off reporting</div>
+                <h3 style={{ fontSize: "1.8rem", letterSpacing: "-0.05em" }}>A controlled workflow that finance can trust.</h3>
+                <div style={{ marginTop: 10 }}>
+                  {steps.map((step, index) => (
+                    <div className="step" key={step.title}>
+                      <div className="step-index mono">{index + 1}</div>
+                      <h3>{step.title}</h3>
+                      <p>{step.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <aside className="quote" aria-label="Customer testimonial">
+                <div className="eyebrow mono" style={{ background: "rgba(255,255,255,0.08)", color: "#d9f0de", borderColor: "rgba(255,255,255,0.08)" }}>
+                  Trusted by global operators
+                </div>
+                <strong>
+                  “We stopped treating carbon like a side spreadsheet and started managing it like a financial reporting process.”
+                </strong>
+                <p>
+                  Verdant Ledger gave our finance, procurement, and sustainability teams one source of truth. We cut reporting cycles,
+                  improved disclosure quality, and finally had a credible ROI case for decarbonization investments.
+                </p>
+                <div className="quote-footer">
+                  <div><strong style={{ fontSize: "1rem", display: "inline" }}>Maya Chen</strong></div>
+                  <div style={{ marginTop: 6, color: "rgba(255,255,255,0.7)" }}>VP Finance, Asteron Infrastructure</div>
+                </div>
+              </aside>
+            </section>
+
+            <section className="cta" id="demo" aria-labelledby="cta-title">
+              <div>
+                <div className="eyebrow mono" style={{ background: "rgba(255,255,255,0.08)", color: "#d8efdc", borderColor: "rgba(255,255,255,0.08)" }}>
+                  Ready for your next reporting cycle
+                </div>
+                <h2 id="cta-title">Turn carbon reporting into a finance-led advantage.</h2>
+                <p>
+                  Launch with your existing systems, strengthen disclosure controls, and give leadership a clearer view of both climate exposure and enterprise return.
+                </p>
+              </div>
+              <div className="hero-actions" style={{ marginTop: 0 }}>
+                <Button href="mailto:hello@verdantledger.com">Request a Demo</Button>
+                <Button href="#security" variant="secondary">Review Security</Button>
+              </div>
+            </section>
+          </main>
+
+          <footer className="container footer">
+            <div>Verdant Ledger</div>
+            <div>Designed for finance-led carbon reporting, assurance readiness, and measurable enterprise ROI.</div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

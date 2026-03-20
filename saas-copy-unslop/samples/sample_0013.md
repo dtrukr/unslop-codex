@@ -1,0 +1,3 @@
+Created a standalone landing page at [teacher-lesson-plans-landing.html](/Users/dennis/git/unslop-codex/teacher-lesson-plans-landing.html). It uses a concise teacher-focused message, a quick lesson-plan preview, and a short three-point value strip rather than a generic SaaS card grid.
+
+I kept it self-contained HTML/CSS so you can open it directly in a browser. I did a structural sanity check on the file, but I did not run a browser-based visual render test in this turn.

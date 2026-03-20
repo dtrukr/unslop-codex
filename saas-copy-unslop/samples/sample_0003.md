@@ -1,0 +1,3 @@
+Added the landing page draft at [saas-copy-unslop/samples/sample_0003.md](/Users/dennis/git/unslop-codex/saas-copy-unslop/samples/sample_0003.md). It’s structured as full homepage copy with hero, problem, solution, features, use cases, proof, FAQ, and final CTA, aimed at startup buyers evaluating phishing protection.
+
+I did not run tests because this repo isn’t a runnable app in its current state; this was a content addition only. If you want, I can next turn this into a tighter paid-traffic version or a more enterprise/security-reviewer version.

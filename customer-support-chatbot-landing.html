@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resolve AI | Customer Support That Replies Before Customers Panic</title>
+  <meta
+    name="description"
+    content="Resolve AI is the customer support chatbot for SaaS teams that want instant answers, cleaner handoffs, and fewer tickets waiting for a human."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: oklch(0.95 0.02 70);
+      --paper: oklch(0.985 0.01 80);
+      --panel: oklch(0.92 0.03 70);
+      --panel-strong: oklch(0.87 0.05 68);
+      --ink: oklch(0.22 0.03 40);
+      --muted: oklch(0.45 0.03 48);
+      --line: oklch(0.72 0.04 65);
+      --accent: oklch(0.64 0.16 35);
+      --accent-deep: oklch(0.49 0.16 32);
+      --signal: oklch(0.78 0.13 95);
+      --signal-deep: oklch(0.58 0.14 96);
+      --good: oklch(0.66 0.12 145);
+      --shadow: 0 28px 70px rgba(86, 49, 32, 0.12);
+      --max: 1240px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Outfit", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255, 251, 243, 0.84), rgba(247, 239, 225, 0.96)),
+        radial-gradient(circle at top left, rgba(201, 90, 52, 0.16), transparent 28%),
+        radial-gradient(circle at 88% 8%, rgba(232, 189, 76, 0.2), transparent 24%),
+        var(--bg);
+    }
+
+    ::selection {
+      background: rgba(201, 90, 52, 0.18);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(var(--max), calc(100vw - 32px));
+      margin: 0 auto;
+    }
+
+    .page-head {
+      padding: 20px 0 0;
+    }
+
+    .headbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 16px 18px;
+      border: 1px solid color-mix(in oklab, var(--line) 70%, white);
+      background: rgba(254, 250, 244, 0.8);
+      box-shadow: 0 10px 30px rgba(81, 49, 32, 0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(255, 246, 228, 0.9), rgba(231, 202, 154, 0.9));
+      border: 1px solid rgba(120, 79, 52, 0.18);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.05em;
+      color: var(--accent-deep);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .brand-copy {
+      display: grid;
+      gap: 3px;
+    }
+
+    .brand-copy strong {
+      font-size: 1rem;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-copy span {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .signal-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .signal-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(255, 252, 247, 0.78);
+      border: 1px solid rgba(120, 79, 52, 0.12);
+    }
+
+    .signal-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--good);
+      box-shadow: 0 0 0 0 rgba(93, 169, 102, 0.34);
+      animation: pulse 2.3s infinite;
+    }
+
+    .head-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 0 18px;
+      background: var(--ink);
+      color: var(--paper);
+      font-weight: 700;
+      transition: transform 180ms ease, background-color 180ms ease;
+      white-space: nowrap;
+    }
+
+    .head-cta:hover,
+    .head-cta:focus-visible {
+      transform: translateY(-1px);
+      background: color-mix(in oklab, var(--ink) 86%, black);
+      outline: none;
+    }
+
+    .hero {
+      padding: clamp(24px, 4vw, 44px) 0 0;
+    }
+
+    .hero-frame {
+      position: relative;
+      overflow: clip;
+      border: 1px solid rgba(120, 79, 52, 0.14);
+      background:
+        linear-gradient(135deg, rgba(255, 251, 244, 0.82), rgba(247, 236, 216, 0.94));
+      box-shadow: var(--shadow);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.88fr);
+      gap: clamp(24px, 4vw, 52px);
+      align-items: stretch;
+      padding: clamp(28px, 4vw, 54px);
+    }
+
+    .hero-copy {
+      display: grid;
+      align-content: start;
+      gap: 26px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 62px;
+      height: 1px;
+      background: color-mix(in oklab, var(--accent-deep) 35%, transparent);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .hero-copy h1 {
+      max-width: 11ch;
+      font-size: clamp(3.4rem, 9vw, 7.3rem);
+      line-height: 0.88;
+      letter-spacing: -0.075em;
+      text-wrap: balance;
+    }
+
+    .hero-copy h1 em {
+      font-family: "Cormorant Garamond", serif;
+      font-style: normal;
+      font-weight: 600;
+      color: var(--accent-deep);
+      letter-spacing: -0.04em;
+    }
+
+    .hero-lead {
+      max-width: 35rem;
+      font-size: clamp(1.04rem, 2vw, 1.26rem);
+      line-height: 1.58;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .button {
+      min-height: 56px;
+      padding: 0 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .button-primary {
+      background: var(--accent);
+      color: var(--paper);
+      box-shadow: 0 14px 26px rgba(201, 90, 52, 0.2);
+    }
+
+    .button-primary:hover,
+    .button-primary:focus-visible {
+      background: color-mix(in oklab, var(--accent) 84%, black);
+    }
+
+    .button-secondary {
+      border-color: rgba(120, 79, 52, 0.2);
+      background: rgba(255, 251, 244, 0.78);
+      color: var(--ink);
+    }
+
+    .promise-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .promise {
+      padding: 14px 16px 16px;
+      border-top: 2px solid rgba(120, 79, 52, 0.14);
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.45;
+    }
+
+    .promise strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .ops-room {
+      position: relative;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      padding: 18px;
+      background: rgba(86, 49, 32, 0.06);
+      border-left: 1px solid rgba(120, 79, 52, 0.12);
+    }
+
+    .room-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(120, 79, 52, 0.12);
+    }
+
+    .room-head strong {
+      font-size: 0.94rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+    }
+
+    .room-head span {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .ticket {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      background: rgba(255, 252, 247, 0.85);
+      border: 1px solid rgba(120, 79, 52, 0.14);
+      transform: rotate(var(--tilt, 0deg));
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .ticket:hover {
+      transform: translateY(-2px) rotate(0deg);
+      box-shadow: 0 18px 32px rgba(86, 49, 32, 0.1);
+    }
+
+    .ticket-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .ticket p {
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .ticket-reply {
+      padding: 12px 13px;
+      background: rgba(232, 189, 76, 0.14);
+      border-left: 3px solid rgba(201, 90, 52, 0.58);
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: color-mix(in oklab, var(--ink) 82%, var(--accent-deep));
+    }
+
+    .impact-bar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      padding: 18px;
+      border-top: 1px solid rgba(120, 79, 52, 0.12);
+      background: rgba(255, 247, 235, 0.78);
+    }
+
+    .impact {
+      display: grid;
+      gap: 3px;
+    }
+
+    .impact strong {
+      font-size: clamp(1.3rem, 2.4vw, 2rem);
+      letter-spacing: -0.06em;
+    }
+
+    .impact span {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    main {
+      padding-bottom: 56px;
+    }
+
+    .section {
+      padding: clamp(56px, 8vw, 100px) 0 0;
+    }
+
+    .section-top {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: clamp(18px, 3vw, 38px);
+      align-items: start;
+      margin-bottom: 28px;
+    }
+
+    .section-kicker {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+    }
+
+    .section-top h2 {
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.065em;
+      max-width: 10ch;
+    }
+
+    .section-intro {
+      max-width: 39rem;
+      font-size: 1.06rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .diagnosis {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+    }
+
+    .meltdown-board,
+    .result-board,
+    .tour-grid,
+    .proof-grid,
+    .faq-grid,
+    .footer-cta {
+      border: 1px solid rgba(120, 79, 52, 0.14);
+      background: rgba(255, 251, 245, 0.8);
+      box-shadow: var(--shadow);
+    }
+
+    .meltdown-board {
+      padding: clamp(22px, 3vw, 34px);
+      display: grid;
+      gap: 20px;
+    }
+
+    .board-heading,
+    .result-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .board-heading strong,
+    .result-heading strong {
+      font-size: 1.28rem;
+      letter-spacing: -0.04em;
+    }
+
+    .board-heading span,
+    .result-heading span {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .pain-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .pain {
+      min-height: 148px;
+      padding: 18px;
+      background: rgba(126, 71, 44, 0.06);
+      border-top: 2px solid rgba(120, 79, 52, 0.18);
+    }
+
+    .pain strong {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .pain p {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .result-board {
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .result-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .result-card {
+      padding: 15px 16px;
+      background: rgba(255, 247, 235, 0.9);
+      border-left: 3px solid rgba(93, 169, 102, 0.54);
+    }
+
+    .result-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+      letter-spacing: -0.03em;
+    }
+
+    .result-card p {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .tour-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      background: rgba(120, 79, 52, 0.14);
+      overflow: hidden;
+    }
+
+    .tour-card {
+      padding: clamp(20px, 3vw, 30px);
+      background: rgba(255, 251, 245, 0.92);
+      display: grid;
+      gap: 14px;
+      min-height: 280px;
+    }
+
+    .tour-number {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+    }
+
+    .tour-card h3 {
+      font-size: 1.46rem;
+      letter-spacing: -0.04em;
+    }
+
+    .tour-card p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .tour-detail {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid rgba(120, 79, 52, 0.12);
+      font-size: 0.92rem;
+      color: color-mix(in oklab, var(--ink) 86%, var(--accent-deep));
+      line-height: 1.55;
+    }
+
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 1px;
+      background: rgba(120, 79, 52, 0.14);
+      overflow: hidden;
+    }
+
+    .proof-panel,
+    .quote-panel {
+      padding: clamp(22px, 3vw, 34px);
+      background: rgba(255, 251, 245, 0.92);
+      display: grid;
+      gap: 18px;
+    }
+
+    .proof-panel strong,
+    .quote-panel strong {
+      font-size: 1.28rem;
+      letter-spacing: -0.04em;
+    }
+
+    .proof-rows {
+      display: grid;
+      gap: 12px;
+    }
+
+    .proof-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px 0;
+      border-top: 1px solid rgba(120, 79, 52, 0.12);
+    }
+
+    .proof-row strong {
+      font-size: 1.65rem;
+      line-height: 0.95;
+    }
+
+    .proof-row p,
+    .quote-panel p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .quote-panel blockquote {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      color: color-mix(in oklab, var(--ink) 90%, var(--accent-deep));
+    }
+
+    .quote-meta {
+      display: grid;
+      gap: 4px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(120, 79, 52, 0.12);
+    }
+
+    .quote-meta span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 0.78fr 1.22fr;
+      gap: 1px;
+      background: rgba(120, 79, 52, 0.14);
+      overflow: hidden;
+    }
+
+    .faq-intro,
+    .faq-list {
+      padding: clamp(22px, 3vw, 34px);
+      background: rgba(255, 251, 245, 0.92);
+    }
+
+    .faq-intro {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .faq-intro p {
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 26rem;
+    }
+
+    .faq-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      border-top: 1px solid rgba(120, 79, 52, 0.12);
+      padding-top: 12px;
+    }
+
+    details:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      padding-right: 28px;
+      position: relative;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "+";
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: var(--accent-deep);
+      font-size: 1.2rem;
+      line-height: 1;
+      transition: transform 180ms ease;
+    }
+
+    details[open] summary::after {
+      transform: rotate(45deg);
+    }
+
+    details p {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    .footer-cta {
+      margin-top: clamp(56px, 8vw, 96px);
+      padding: clamp(24px, 4vw, 42px);
+      display: grid;
+      grid-template-columns: 1.1fr auto;
+      gap: 26px;
+      align-items: center;
+      background:
+        linear-gradient(135deg, rgba(255, 249, 239, 0.96), rgba(243, 229, 203, 0.92));
+    }
+
+    .footer-cta h2 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 12ch;
+      margin-bottom: 12px;
+    }
+
+    .footer-cta p {
+      max-width: 35rem;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1.02rem;
+    }
+
+    .cta-stack {
+      display: grid;
+      gap: 12px;
+      justify-items: start;
+    }
+
+    .mini-note {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 18px 0 30px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(93, 169, 102, 0.34);
+      }
+      70% {
+        box-shadow: 0 0 0 14px rgba(93, 169, 102, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(93, 169, 102, 0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .headbar,
+      .hero-grid,
+      .section-top,
+      .diagnosis,
+      .proof-grid,
+      .faq-grid,
+      .footer-cta {
+        grid-template-columns: 1fr;
+      }
+
+      .signal-strip {
+        justify-content: start;
+      }
+
+      .ops-room {
+        border-left: 0;
+        border-top: 1px solid rgba(120, 79, 52, 0.12);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .headbar {
+        grid-template-columns: 1fr;
+      }
+
+      .promise-row,
+      .impact-bar,
+      .pain-list,
+      .tour-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-bar {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(var(--max), calc(100vw - 20px));
+      }
+
+      .hero-grid,
+      .meltdown-board,
+      .proof-panel,
+      .quote-panel,
+      .faq-intro,
+      .faq-list,
+      .footer-cta {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .hero-copy h1,
+      .section-top h2,
+      .footer-cta h2 {
+        max-width: none;
+      }
+
+      .proof-row {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions,
+      .button,
+      .head-cta {
+        width: 100%;
+      }
+
+      .button,
+      .head-cta {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-head shell reveal" style="--delay: 40ms;">
+    <div class="headbar">
+      <a class="brand" href="#top" aria-label="Resolve AI home">
+        <div class="brand-mark">R</div>
+        <div class="brand-copy">
+          <strong>Resolve AI</strong>
+          <span>Customer support chatbot for fast-growing SaaS teams</span>
+        </div>
+      </a>
+      <div class="signal-strip" aria-label="support activity indicators">
+        <div class="signal-chip"><span class="signal-dot" aria-hidden="true"></span> 24/7 instant replies</div>
+        <div class="signal-chip">Human handoff with context</div>
+        <div class="signal-chip">Answers trained on your help center</div>
+      </div>
+      <a class="head-cta" href="#book">See the support flow</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-frame reveal" style="--delay: 120ms;">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">For teams tired of inbox roulette</div>
+            <h1>Let the bot catch the <em>first wave</em> so your team can solve the hard stuff.</h1>
+            <p class="hero-lead">
+              Resolve AI answers repetitive support questions in seconds, routes urgent conversations to the right rep,
+              and gives your customers a response before frustration turns into churn.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#book">Book a live walkthrough</a>
+              <a class="button button-secondary" href="#proof">See the numbers</a>
+            </div>
+            <div class="promise-row">
+              <div class="promise">
+                <strong>Fewer repetitive tickets</strong>
+                Your AI agent handles password resets, billing questions, and how-to requests without flooding the queue.
+              </div>
+              <div class="promise">
+                <strong>Better escalations</strong>
+                When a human needs to step in, they inherit the transcript, account context, and the customer’s intent.
+              </div>
+              <div class="promise">
+                <strong>Answers that stay on-brand</strong>
+                Train on docs, macros, and policies so replies sound like your team, not a generic bot.
+              </div>
+            </div>
+          </div>
+
+          <aside class="ops-room" aria-label="Live support activity">
+            <div class="room-head">
+              <div>
+                <strong>Support room</strong>
+                <span>Friday 3:42 PM</span>
+              </div>
+              <span>17 conversations active</span>
+            </div>
+
+            <article class="ticket" style="--tilt: -1.3deg;">
+              <div class="ticket-meta">
+                <span>Billing concern</span>
+                <span>Resolved in 34s</span>
+              </div>
+              <p>"I upgraded twice by mistake. Did I just get charged for both seats?"</p>
+              <div class="ticket-reply">
+                Resolve AI verified the duplicate event, explained the refund window, and opened a finance follow-up with the receipt already attached.
+              </div>
+            </article>
+
+            <article class="ticket" style="--tilt: 0.9deg;">
+              <div class="ticket-meta">
+                <span>Product question</span>
+                <span>Auto answered</span>
+              </div>
+              <p>"Can your analytics export to CSV every Monday, or do I need Zapier for that?"</p>
+              <div class="ticket-reply">
+                The bot answered with the exact workflow, linked the setup article, and offered a handoff only if the customer needed custom scheduling.
+              </div>
+            </article>
+
+            <article class="ticket" style="--tilt: -0.6deg;">
+              <div class="ticket-meta">
+                <span>Urgent account risk</span>
+                <span>Escalated with context</span>
+              </div>
+              <p>"My admin left the company and we’re locked out before payroll closes."</p>
+              <div class="ticket-reply">
+                Resolve AI detected urgency, verified identity steps, and routed the case to the right human with priority, transcript, and account history included.
+              </div>
+            </article>
+          </aside>
+        </div>
+
+        <div class="impact-bar">
+          <div class="impact">
+            <strong>71%</strong>
+            <span>of routine tickets solved before a human touches the thread</span>
+          </div>
+          <div class="impact">
+            <strong>18 sec</strong>
+            <span>median first reply time across web chat and email</span>
+          </div>
+          <div class="impact">
+            <strong>2.3x</strong>
+            <span>more conversations handled per rep after launch</span>
+          </div>
+          <div class="impact">
+            <strong>94%</strong>
+            <span>CSAT on AI-assisted resolutions for repeatable questions</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="why">
+      <div class="section-top reveal" style="--delay: 90ms;">
+        <div>
+          <div class="section-kicker">Why teams switch</div>
+          <h2>The problem is not ticket volume. It is ticket drag.</h2>
+        </div>
+        <p class="section-intro">
+          Most support teams do not need more dashboards. They need fewer conversations clogging the line, fewer context
+          switches, and fewer customers waiting through the same copy-pasted back-and-forth. Resolve AI is built to remove that drag.
+        </p>
+      </div>
+
+      <div class="diagnosis reveal" style="--delay: 150ms;">
+        <div class="meltdown-board">
+          <div class="board-heading">
+            <strong>What support feels like before automation</strong>
+            <span>Slow, repetitive, expensive</span>
+          </div>
+          <div class="pain-list">
+            <div class="pain">
+              <strong>Queues swell at the worst moments</strong>
+              <p>Launch day, invoice day, outage day. Your team gets buried exactly when speed matters most.</p>
+            </div>
+            <div class="pain">
+              <strong>Great reps waste time on easy tickets</strong>
+              <p>Password resets and pricing clarifications should not take senior humans away from edge cases.</p>
+            </div>
+            <div class="pain">
+              <strong>Escalations arrive empty-handed</strong>
+              <p>Customers repeat themselves. Reps retrace basics. Nobody feels taken care of.</p>
+            </div>
+            <div class="pain">
+              <strong>Docs exist, but customers do not want homework</strong>
+              <p>People want answers inside the conversation, not another link they have to decode alone.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="result-board">
+          <div class="result-heading">
+            <strong>What changes with Resolve AI</strong>
+            <span>Fast, precise, calm</span>
+          </div>
+          <div class="result-stack">
+            <div class="result-card">
+              <strong>Instant replies with real sources</strong>
+              <p>Answer from your knowledge base, saved macros, policy docs, and product guidance without hallucinating generic filler.</p>
+            </div>
+            <div class="result-card">
+              <strong>Intent-aware routing</strong>
+              <p>Refund request, feature confusion, locked-out admin, security concern. Each one gets the right path automatically.</p>
+            </div>
+            <div class="result-card">
+              <strong>Every human handoff starts ahead</strong>
+              <p>The rep sees the conversation summary, recommended next step, and what the bot already tried.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section shell" id="flow">
+      <div class="section-top reveal" style="--delay: 90ms;">
+        <div>
+          <div class="section-kicker">How it works</div>
+          <h2>One support system for the questions you see every single day.</h2>
+        </div>
+        <p class="section-intro">
+          The point is not to replace your team. The point is to make your best people visible exactly where they are most valuable.
+          Resolve AI handles the repeatable layer and keeps the human layer sharp.
+        </p>
+      </div>
+
+      <div class="tour-grid reveal" style="--delay: 160ms;">
+        <article class="tour-card">
+          <div class="tour-number">Step 01</div>
+          <h3>Train it on what your team already knows</h3>
+          <p>Import docs, macro replies, onboarding guides, and account rules. The bot learns your approved answers, not random internet prose.</p>
+          <div class="tour-detail">Live sync keeps the bot current as your help center changes, so the answers stay usable after launch.</div>
+        </article>
+        <article class="tour-card">
+          <div class="tour-number">Step 02</div>
+          <h3>Let it answer, clarify, and qualify</h3>
+          <p>Resolve AI asks follow-up questions when needed, detects urgency, and guides customers to the shortest path to resolution.</p>
+          <div class="tour-detail">This is where response time drops fast: the customer gets movement immediately instead of waiting for the next available rep.</div>
+        </article>
+        <article class="tour-card">
+          <div class="tour-number">Step 03</div>
+          <h3>Pass the hard cases to humans with momentum</h3>
+          <p>Escalations arrive with summary, conversation history, account context, and recommended action so your team starts ahead.</p>
+          <div class="tour-detail">The result is cleaner human support, not just cheaper support. Customers feel continuity instead of escalation whiplash.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section shell" id="proof">
+      <div class="section-top reveal" style="--delay: 100ms;">
+        <div>
+          <div class="section-kicker">Proof</div>
+          <h2>Fast support is measurable. So is the relief on your team.</h2>
+        </div>
+        <p class="section-intro">
+          High-converting pages need credibility. In support, credibility comes from hard operational improvements, not vague claims about AI magic.
+        </p>
+      </div>
+
+      <div class="proof-grid reveal" style="--delay: 170ms;">
+        <div class="proof-panel">
+          <strong>Typical outcomes after 30 days</strong>
+          <div class="proof-rows">
+            <div class="proof-row">
+              <strong>43%</strong>
+              <p>drop in inbound tickets that require a rep to type the first answer manually.</p>
+            </div>
+            <div class="proof-row">
+              <strong>29%</strong>
+              <p>faster time to resolution because humans enter the conversation with context instead of starting from zero.</p>
+            </div>
+            <div class="proof-row">
+              <strong>11 hrs</strong>
+              <p>per week reclaimed for every five support reps working a standard SaaS queue.</p>
+            </div>
+          </div>
+        </div>
+        <div class="quote-panel">
+          <strong>From a team lead</strong>
+          <blockquote>
+            “The biggest win was not cost. It was quiet. The queue stopped feeling like an emergency room.”
+          </blockquote>
+          <p>
+            Resolve AI now handles repetitive product and billing questions automatically, while the human team spends more time on renewals,
+            bugs, and frustrated high-value accounts.
+          </p>
+          <div class="quote-meta">
+            <strong>Marina Bell</strong>
+            <span>Head of Support, Northstar Metrics</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="book">
+      <div class="faq-grid reveal" style="--delay: 120ms;">
+        <div class="faq-intro">
+          <div class="section-kicker">Buying questions</div>
+          <h2>You do not need a six-month AI program to launch this.</h2>
+          <p>
+            Most teams go live quickly because Resolve AI is designed around support operations, not open-ended model experimentation.
+            Start with your highest-volume questions and expand once the workflow is clean.
+          </p>
+          <a class="button button-primary" href="mailto:hello@resolveai.example?subject=Resolve%20AI%20demo">Request a demo</a>
+          <div class="mini-note">Typical onboarding: 7 to 14 days for a mid-market support team.</div>
+        </div>
+        <div class="faq-list">
+          <details open>
+            <summary>Will customers know they are talking to a bot?</summary>
+            <p>Yes. The assistant is clearly identified, and the experience is designed to feel direct and useful instead of pretending to be a human rep.</p>
+          </details>
+          <details>
+            <summary>What happens if the bot is not confident?</summary>
+            <p>Resolve AI can ask clarifying questions, cite the source it is using, or escalate the conversation automatically based on the rules you define.</p>
+          </details>
+          <details>
+            <summary>Can we keep control over tone and policy?</summary>
+            <p>Yes. Approved content sources, escalation rules, blocked topics, refund language, and compliance-sensitive guidance all stay under your control.</p>
+          </details>
+          <details>
+            <summary>Does this replace our help desk?</summary>
+            <p>No. It sits in front of your existing workflow, answering what it should and handing off what it should not, with transcript and context intact.</p>
+          </details>
+        </div>
+      </div>
+
+      <div class="footer-cta reveal" style="--delay: 200ms;">
+        <div>
+          <h2>Customers do not care how busy your queue is. They care how fast they feel helped.</h2>
+          <p>
+            Put Resolve AI in front of your support inbox and turn repeat questions into instant answers, messy escalations into clean handoffs,
+            and overloaded reps into a team that can actually breathe again.
+          </p>
+        </div>
+        <div class="cta-stack">
+          <a class="button button-primary" href="mailto:hello@resolveai.example?subject=Book%20Resolve%20AI%20walkthrough">Book a walkthrough</a>
+          <a class="button button-secondary" href="mailto:hello@resolveai.example?subject=Send%20Resolve%20AI%20pricing">Ask for pricing</a>
+          <div class="mini-note">No setup fee. Live onboarding included.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell footer-bar">
+    <div>Resolve AI. Built for support teams that need speed without losing judgment.</div>
+    <div class="footer-links">
+      <a href="mailto:hello@resolveai.example">hello@resolveai.example</a>
+      <a href="#proof">Outcomes</a>
+      <a href="#flow">Workflow</a>
+    </div>
+  </footer>
+</body>
+</html>

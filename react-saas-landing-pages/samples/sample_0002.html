@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AegisLayer | Enterprise Cybersecurity Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #08111d;
+      --panel: rgba(10, 22, 38, 0.8);
+      --panel-strong: #0d1b2d;
+      --line: rgba(166, 196, 255, 0.14);
+      --text: #e8f0fb;
+      --muted: #93a7c6;
+      --accent: #2ec5a7;
+      --accent-2: #74a8ff;
+      --white: #ffffff;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: radial-gradient(circle at top right, rgba(116,168,255,0.18), transparent 28%), radial-gradient(circle at top left, rgba(46,197,167,0.14), transparent 24%), var(--bg); color: var(--text); font-family: "Manrope", sans-serif; }
+    body { min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; }
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; position: sticky; top: 0; backdrop-filter: blur(12px); z-index: 10; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 0.02em; }
+    .brand-mark { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent-2), var(--accent)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 12px 30px rgba(46,197,167,0.25); color: #04131b; font-weight: 900; }
+    .nav-links { display: flex; gap: 26px; color: var(--muted); font-size: 14px; }
+    .nav-cta { padding: 12px 18px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,0.04); font-weight: 700; }
+    .hero { display: grid; grid-template-columns: 1.2fr 0.9fr; gap: 28px; padding: 34px 0 26px; align-items: center; }
+    .eyebrow { display: inline-flex; gap: 8px; align-items: center; border: 1px solid rgba(116,168,255,0.22); background: rgba(116,168,255,0.08); color: #bfd5ff; border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 700; }
+    h1 { margin: 16px 0 16px; font-size: clamp(42px, 6vw, 72px); line-height: 0.95; letter-spacing: -0.04em; max-width: 11ch; }
+    .hero p { color: var(--muted); font-size: 18px; line-height: 1.7; max-width: 58ch; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin: 28px 0 22px; }
+    .btn { padding: 15px 20px; border-radius: 14px; border: 1px solid transparent; font-weight: 800; cursor: pointer; transition: 180ms ease; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #85f0db); color: #052019; box-shadow: 0 18px 38px rgba(46,197,167,0.28); }
+    .btn-secondary { background: rgba(255,255,255,0.03); color: var(--text); border-color: var(--line); }
+    .btn:hover { transform: translateY(-1px); }
+    .stats { display: flex; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+    .stats strong { display: block; color: var(--text); font-size: 24px; margin-bottom: 4px; }
+    .panel { background: linear-gradient(180deg, rgba(12,25,42,0.92), rgba(10,20,35,0.88)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .hero-card { padding: 20px; position: relative; overflow: hidden; }
+    .hero-card::after { content: ""; position: absolute; inset: auto -10% -20% auto; width: 240px; height: 240px; background: radial-gradient(circle, rgba(46,197,167,0.18), transparent 60%); pointer-events: none; }
+    .screen { background: linear-gradient(180deg, #0b1522, #09111c); border: 1px solid rgba(255,255,255,0.05); border-radius: 18px; padding: 18px; }
+    .screen-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
+    .signal { display: flex; gap: 8px; }
+    .signal span { width: 9px; height: 9px; border-radius: 999px; background: rgba(255,255,255,0.16); }
+    .signal span:first-child { background: #2ec5a7; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mini { padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); }
+    .mini h4, .mini p { margin: 0; }
+    .mini h4 { font-size: 14px; color: var(--muted); font-weight: 700; }
+    .mini p { margin-top: 8px; font-size: 24px; font-weight: 800; }
+    .bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; margin-top: 12px; }
+    .bar > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+    section { padding: 28px 0; }
+    .section-head { display: flex; justify-content: space-between; gap: 16px; align-items: end; margin-bottom: 18px; }
+    .section-head h2 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -0.03em; }
+    .section-head p { margin: 0; max-width: 54ch; color: var(--muted); line-height: 1.7; }
+    .logos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .logo-card, .badge, .feature, .form-card { padding: 18px; }
+    .logo-card { border: 1px solid var(--line); border-radius: 18px; color: #c8d7ef; text-align: center; font-weight: 800; letter-spacing: 0.08em; background: rgba(255,255,255,0.02); }
+    .badges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .badge { border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
+    .badge-mark { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: rgba(116,168,255,0.12); color: #b8d1ff; font-weight: 800; margin-bottom: 14px; }
+    .badge h3, .feature h3 { margin: 0 0 8px; font-size: 18px; }
+    .badge p, .feature p { margin: 0; color: var(--muted); line-height: 1.65; }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature { border-radius: 20px; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)); }
+    .feature-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: rgba(46,197,167,0.12); color: #9ef2e2; margin-bottom: 14px; }
+    .cta-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18px; }
+    .trust-card { padding: 24px; }
+    .trust-list { display: grid; gap: 14px; margin-top: 18px; }
+    .trust-item { display: flex; gap: 14px; align-items: start; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+    .trust-item b { display: block; margin-bottom: 4px; }
+    .form-card { border-radius: 24px; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid var(--line); }
+    form { display: grid; gap: 12px; }
+    label { display: grid; gap: 8px; font-size: 14px; color: #c4d4ee; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(7, 13, 22, 0.85);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 14px 15px;
+      font: inherit;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: rgba(116,168,255,0.45); box-shadow: 0 0 0 4px rgba(116,168,255,0.12); }
+    textarea { min-height: 110px; resize: vertical; }
+    .form-note { color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .footer { padding: 28px 0 50px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 20px; }
+    .reveal { opacity: 0; transform: translateY(16px); animation: rise 700ms ease forwards; }
+    .reveal:nth-child(2) { animation-delay: 90ms; }
+    .reveal:nth-child(3) { animation-delay: 180ms; }
+    .reveal:nth-child(4) { animation-delay: 270ms; }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 980px) {
+      .hero, .cta-grid, .features, .badges, .logos { grid-template-columns: 1fr 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .cta-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 640px) {
+      .logos, .badges, .features, .grid-2 { grid-template-columns: 1fr; }
+      .footer, .section-head, .nav { display: block; }
+      .nav-cta { margin-top: 14px; display: inline-block; }
+      h1 { max-width: none; }
+      .shell { width: min(100vw - 20px, 1180px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const logos = ["NOVA BANK", "HELIOS", "VANTAGE", "LATTICE", "ARBOR SYS"];
+    const badges = [
+      { mark: "SOC", title: "SOC 2 Type II", text: "Continuous controls, evidence collection, and auditor-ready reporting across your cloud estate." },
+      { mark: "ISO", title: "ISO 27001 Ready", text: "Map policy, asset, and risk workflows to your security management program with confidence." },
+      { mark: "GDPR", title: "GDPR Coverage", text: "Track sensitive data exposure and automate remediation paths for privacy-critical systems." },
+      { mark: "24/7", title: "24/7 Monitoring", text: "Enterprise-grade detection coverage with alert routing built for security operations teams." }
+    ];
+    const features = [
+      { icon: "AI", title: "Risk Prioritization", text: "Correlate misconfigurations, exposures, and user behavior into one business-impact view." },
+      { icon: "ID", title: "Identity Defense", text: "Detect privilege sprawl, stale access, and anomalous account behavior before it turns critical." },
+      { icon: "CL", title: "Cloud Visibility", text: "See assets, vulnerabilities, and control drift across AWS, Azure, and GCP in one console." }
+    ];
+    const trustItems = [
+      { title: "Board-ready reporting", text: "Translate technical findings into risk posture, compliance status, and action ownership." },
+      { title: "Fast deployment", text: "Connect core infrastructure in days, not quarters, with low-friction onboarding and guided setup." },
+      { title: "Built for regulated teams", text: "Security, privacy, and audit controls are designed into the product from day one." }
+    ];
+
+    function App() {
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const button = e.currentTarget.querySelector("button[type='submit']");
+        const original = button.textContent;
+        button.textContent = "Request Sent";
+        button.disabled = true;
+        setTimeout(() => {
+          button.textContent = original;
+          button.disabled = false;
+        }, 2200);
+      };
+
+      return (
+        <>
+          <div className="shell">
+            <nav className="nav">
+              <div className="brand">
+                <div className="brand-mark">A</div>
+                <div>AegisLayer</div>
+              </div>
+              <div className="nav-links">
+                <a href="#compliance">Compliance</a>
+                <a href="#benefits">Benefits</a>
+                <a href="#customers">Customers</a>
+                <a href="#demo">Request Demo</a>
+              </div>
+              <a className="nav-cta" href="#demo">Talk to Sales</a>
+            </nav>
+
+            <section className="hero">
+              <div>
+                <div className="eyebrow">Trusted by security and compliance teams</div>
+                <h1>Modern cyber defense for high-stakes enterprises.</h1>
+                <p>
+                  AegisLayer gives security leaders a single operating layer for cloud posture, identity risk,
+                  compliance evidence, and executive reporting without adding more dashboard noise.
+                </p>
+                <div className="hero-actions">
+                  <a href="#demo" className="btn btn-primary">Request a Demo</a>
+                  <a href="#customers" className="btn btn-secondary">View Customer Proof</a>
+                </div>
+                <div className="stats">
+                  <div><strong>99.99%</strong> platform uptime SLA</div>
+                  <div><strong>&lt; 14 days</strong> average deployment</div>
+                  <div><strong>40%</strong> faster audit prep</div>
+                </div>
+              </div>
+
+              <div className="panel hero-card">
+                <div className="screen">
+                  <div className="screen-top">
+                    <span>Executive Security Command Center</span>
+                    <div className="signal"><span></span><span></span><span></span></div>
+                  </div>
+                  <div className="grid-2">
+                    <div className="mini">
+                      <h4>Exposure Score</h4>
+                      <p>18 / 100</p>
+                      <div className="bar"><span style={{width: "82%"}}></span></div>
+                    </div>
+                    <div className="mini">
+                      <h4>Critical Alerts</h4>
+                      <p>04</p>
+                      <div className="bar"><span style={{width: "36%"}}></span></div>
+                    </div>
+                    <div className="mini">
+                      <h4>Controls Passing</h4>
+                      <p>97.2%</p>
+                      <div className="bar"><span style={{width: "97%"}}></span></div>
+                    </div>
+                    <div className="mini">
+                      <h4>Identity Drift</h4>
+                      <p>Low</p>
+                      <div className="bar"><span style={{width: "22%"}}></span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="customers">
+              <div className="section-head">
+                <h2>Chosen by teams that cannot afford uncertainty.</h2>
+                <p>From financial services to healthcare and enterprise software, AegisLayer supports organizations operating under strict security and audit pressure.</p>
+              </div>
+              <div className="logos">
+                {logos.map((logo, i) => <div key={logo} className="logo-card reveal">{logo}</div>)}
+              </div>
+            </section>
+
+            <section id="compliance">
+              <div className="section-head">
+                <h2>Compliance built into daily operations.</h2>
+                <p>Replace spreadsheet-heavy audit workflows with live evidence, mapped controls, and defensible reporting your stakeholders can trust.</p>
+              </div>
+              <div className="badges">
+                {badges.map((item) => (
+                  <div className="badge reveal" key={item.title}>
+                    <div className="badge-mark">{item.mark}</div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section id="benefits">
+              <div className="section-head">
+                <h2>Security outcomes that scale with the business.</h2>
+                <p>Unify technical telemetry and governance workflows so your teams spend less time chasing data and more time reducing actual risk.</p>
+              </div>
+              <div className="features">
+                {features.map((feature) => (
+                  <div className="feature reveal" key={feature.title}>
+                    <div className="feature-icon">{feature.icon}</div>
+                    <h3>{feature.title}</h3>
+                    <p>{feature.text}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section id="demo">
+              <div className="cta-grid">
+                <div className="panel trust-card">
+                  <div className="eyebrow">Why enterprise teams switch</div>
+                  <h2 style={{marginTop: 16, marginBottom: 10, fontSize: "clamp(30px, 4vw, 46px)", letterSpacing: "-0.03em"}}>One platform for security, compliance, and executive trust.</h2>
+                  <p style={{color: "var(--muted)", lineHeight: 1.75}}>
+                    AegisLayer helps CISOs and security teams prove control effectiveness, reduce manual audit effort,
+                    and respond faster with clearer context.
+                  </p>
+                  <div className="trust-list">
+                    {trustItems.map((item) => (
+                      <div className="trust-item" key={item.title}>
+                        <div className="badge-mark" style={{width: 38, height: 38, marginBottom: 0}}>✓</div>
+                        <div>
+                          <b>{item.title}</b>
+                          <span style={{color: "var(--muted)", lineHeight: 1.65}}>{item.text}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="form-card">
+                  <h3 style={{marginTop: 0, marginBottom: 8, fontSize: 28}}>Request a live demo</h3>
+                  <p style={{marginTop: 0, marginBottom: 18, color: "var(--muted)", lineHeight: 1.7}}>
+                    Tell us about your environment and a product specialist will reach out.
+                  </p>
+                  <form onSubmit={handleSubmit}>
+                    <label>
+                      Full name
+                      <input type="text" placeholder="Jordan Lee" required />
+                    </label>
+                    <label>
+                      Work email
+                      <input type="email" placeholder="jordan@company.com" required />
+                    </label>
+                    <label>
+                      Company size
+                      <select defaultValue="">
+                        <option value="" disabled>Select range</option>
+                        <option>1-250 employees</option>
+                        <option>251-1000 employees</option>
+                        <option>1001-5000 employees</option>
+                        <option>5000+ employees</option>
+                      </select>
+                    </label>
+                    <label>
+                      Primary priority
+                      <textarea placeholder="Cloud posture, identity security, audit readiness, or incident visibility"></textarea>
+                    </label>
+                    <button className="btn btn-primary" type="submit">Book My Demo</button>
+                    <div className="form-note">
+                      By submitting, you agree to be contacted about AegisLayer products and services. Enterprise data is handled under strict privacy controls.
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </section>
+
+            <footer className="footer">
+              <div>© 2026 AegisLayer. Enterprise cybersecurity software for modern risk teams.</div>
+              <div>Security • Compliance • Privacy</div>
+            </footer>
+          </div>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

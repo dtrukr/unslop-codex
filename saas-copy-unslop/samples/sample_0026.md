@@ -1,0 +1,3 @@
+Created a new standalone landing page at [recruiter-interview-scheduling-landing.html](/Users/dennis/git/unslop-codex/recruiter-interview-scheduling-landing.html). It uses a bold editorial/brutalist direction with sharper copy, asymmetrical layout, animated capability ticker, and recruiter-specific messaging around interview loops, reschedules, interviewer load, and ATS/calendar coordination.
+
+I kept it self-contained in one HTML file with responsive CSS and external Google Fonts only. Verification: the document parses cleanly with Python’s `html.parser`.

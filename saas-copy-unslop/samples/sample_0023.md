@@ -1,0 +1,3 @@
+Created a standalone landing page at [creator-course-saas-landing.html](/Users/dennis/git/unslop-codex/creator-course-saas-landing.html). It uses a restrained editorial style with custom typography, warm neutral tones, a simple product-preview panel, concise SaaS copy for course creators, and responsive behavior for mobile.
+
+Verification: I parsed the HTML successfully with Python’s `html.parser`. If you want, I can do a second pass to make it more premium, more conversion-focused, or convert it into React/Next markup instead of a single HTML file.

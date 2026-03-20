@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relayroom | No-Code Workflows for Operations Managers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,700&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --canvas: oklch(95% 0.025 84);
+      --canvas-deep: oklch(90% 0.04 84);
+      --ink: oklch(23% 0.03 235);
+      --ink-soft: oklch(40% 0.03 235);
+      --rail: oklch(74% 0.04 82);
+      --accent-red: oklch(67% 0.17 28);
+      --accent-mustard: oklch(82% 0.12 86);
+      --accent-olive: oklch(73% 0.1 142);
+      --accent-blue: oklch(72% 0.1 227);
+      --paper: rgba(255, 250, 241, 0.88);
+      --shadow: 0 24px 60px rgba(77, 60, 33, 0.12);
+      --edge: 1px solid rgba(92, 72, 41, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Archivo", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(219, 191, 139, 0.18), transparent 18%),
+        linear-gradient(135deg, rgba(158, 181, 119, 0.1), transparent 30%),
+        var(--canvas);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .shell {
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 20px 0 56px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 0 0 18px;
+      border-bottom: var(--edge);
+    }
+
+    .stamp {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.77rem;
+      font-weight: 700;
+    }
+
+    .stamp-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px 13px 13px 4px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, var(--accent-mustard), color-mix(in oklab, var(--accent-red) 70%, white));
+      box-shadow: var(--shadow);
+      font-family: "Newsreader", serif;
+      font-size: 1.4rem;
+    }
+
+    .dispatch-note {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      justify-self: center;
+      text-align: center;
+    }
+
+    .masthead-cta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .text-link {
+      font-size: 0.92rem;
+      padding-bottom: 2px;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .solid-link {
+      background: var(--ink);
+      color: var(--canvas);
+      padding: 13px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .solid-link:hover,
+    .solid-link:focus-visible,
+    .text-link:hover,
+    .text-link:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    .hero-ledger {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+      gap: 24px;
+      padding-top: 24px;
+      align-items: stretch;
+    }
+
+    .headline-panel {
+      display: grid;
+      gap: 18px;
+      padding: clamp(24px, 4vw, 42px);
+      background:
+        linear-gradient(180deg, rgba(255, 249, 239, 0.82), rgba(247, 237, 217, 0.92)),
+        var(--paper);
+      border: var(--edge);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .headline-panel::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -38% auto;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(198, 83, 52, 0.18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .eyeline span:first-child {
+      color: var(--accent-red);
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-family: "Newsreader", serif;
+      font-size: clamp(3.2rem, 7vw, 6.6rem);
+      line-height: 0.94;
+      letter-spacing: -0.045em;
+    }
+
+    .headline-panel p {
+      max-width: 44rem;
+      font-size: clamp(1.04rem, 1.6vw, 1.22rem);
+      line-height: 1.68;
+      color: var(--ink-soft);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      padding-top: 4px;
+    }
+
+    .hero-actions .solid-link {
+      padding-inline: 18px;
+    }
+
+    .callout-line {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      padding-top: 14px;
+      border-top: var(--edge);
+    }
+
+    .callout-line div {
+      display: grid;
+      gap: 6px;
+    }
+
+    .callout-line strong {
+      font-size: 0.78rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .callout-line span {
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .control-board {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      background: color-mix(in oklab, var(--canvas-deep) 78%, white);
+      border: var(--edge);
+      box-shadow: var(--shadow);
+      align-content: start;
+    }
+
+    .board-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      padding-bottom: 10px;
+      border-bottom: var(--edge);
+    }
+
+    .board-head span {
+      display: block;
+      font-size: 0.78rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .board-head strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.22rem;
+      line-height: 1.2;
+    }
+
+    .badge {
+      padding: 8px 10px;
+      background: rgba(255, 251, 246, 0.9);
+      border: var(--edge);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .lane {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(255, 250, 244, 0.78);
+      border: var(--edge);
+      transform-origin: center;
+      transition: transform 220ms ease, background-color 220ms ease;
+    }
+
+    .lane:hover {
+      transform: translateX(4px);
+      background: rgba(255, 247, 235, 0.95);
+    }
+
+    .lane-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .lane-title span:last-child {
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    .lane p {
+      color: var(--ink-soft);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .mini-track {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      height: 8px;
+    }
+
+    .mini-track span {
+      border-radius: 999px;
+      background: rgba(81, 66, 42, 0.14);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mini-track span::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform-origin: left;
+      animation: fill 5.5s ease-in-out infinite alternate;
+    }
+
+    .lane:nth-child(2) .mini-track span::after {
+      background: color-mix(in oklab, var(--accent-red) 78%, white);
+    }
+
+    .lane:nth-child(3) .mini-track span::after {
+      background: color-mix(in oklab, var(--accent-olive) 78%, white);
+      animation-duration: 4.8s;
+    }
+
+    .lane:nth-child(4) .mini-track span::after {
+      background: color-mix(in oklab, var(--accent-blue) 78%, white);
+      animation-duration: 6.2s;
+    }
+
+    .lane:nth-child(5) .mini-track span::after {
+      background: color-mix(in oklab, var(--accent-mustard) 80%, white);
+      animation-duration: 5.1s;
+    }
+
+    @keyframes fill {
+      from {
+        transform: scaleX(0.28);
+      }
+      to {
+        transform: scaleX(0.92);
+      }
+    }
+
+    .storyline {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    .section-note {
+      padding: 26px;
+      background: rgba(255, 251, 244, 0.84);
+      border-top: 3px solid var(--ink);
+      box-shadow: var(--shadow);
+    }
+
+    .section-note span {
+      display: block;
+      margin-bottom: 16px;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .section-note h2 {
+      max-width: 12ch;
+      font-family: "Newsreader", serif;
+      font-size: clamp(2.1rem, 4vw, 4rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .section-note p {
+      margin-top: 16px;
+      max-width: 34rem;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+
+    .daybook {
+      display: grid;
+      gap: 14px;
+    }
+
+    .moment {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 14px;
+      padding: 16px 0 0;
+      border-top: var(--edge);
+    }
+
+    .moment strong {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-soft);
+    }
+
+    .moment-card {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      background: rgba(255, 248, 236, 0.72);
+      border: var(--edge);
+    }
+
+    .moment-card h3 {
+      font-size: 1.08rem;
+    }
+
+    .moment-card p {
+      color: var(--ink-soft);
+      line-height: 1.56;
+      font-size: 0.95rem;
+    }
+
+    .scribble {
+      display: inline-block;
+      padding: 2px 8px 4px;
+      background: linear-gradient(180deg, transparent 35%, rgba(227, 190, 98, 0.46) 35%);
+    }
+
+    .proof-sheet {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .metrics-wall {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric-block {
+      min-height: 178px;
+      padding: 18px;
+      border: var(--edge);
+      background: rgba(255, 250, 242, 0.78);
+      display: grid;
+      align-content: start;
+      gap: 14px;
+    }
+
+    .metric-block:nth-child(2) {
+      background: color-mix(in oklab, white 68%, var(--accent-mustard));
+    }
+
+    .metric-block:nth-child(3) {
+      background: color-mix(in oklab, white 78%, var(--accent-olive));
+    }
+
+    .metric-block:nth-child(4) {
+      background: color-mix(in oklab, white 78%, var(--accent-blue));
+    }
+
+    .metric-block strong {
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .metric-block h3 {
+      font-family: "Newsreader", serif;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    .metric-block p {
+      color: var(--ink-soft);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .quote-strip {
+      display: grid;
+      gap: 12px;
+    }
+
+    .quote-card,
+    .cta-sheet {
+      padding: 22px;
+      background: rgba(255, 249, 239, 0.86);
+      border: var(--edge);
+      box-shadow: var(--shadow);
+    }
+
+    .quote-card p {
+      font-family: "Newsreader", serif;
+      font-size: 1.7rem;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .quote-card span {
+      display: block;
+      margin-top: 14px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .cta-sheet {
+      display: grid;
+      gap: 14px;
+      background:
+        linear-gradient(135deg, rgba(242, 206, 119, 0.24), transparent 45%),
+        rgba(255, 246, 231, 0.92);
+    }
+
+    .cta-sheet span {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-soft);
+    }
+
+    .cta-sheet h2 {
+      font-family: "Newsreader", serif;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 0.97;
+      letter-spacing: -0.04em;
+      max-width: 11ch;
+    }
+
+    .cta-sheet p {
+      color: var(--ink-soft);
+      line-height: 1.62;
+      max-width: 30rem;
+    }
+
+    .cta-sheet .hero-actions {
+      padding-top: 0;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: start;
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: var(--edge);
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 980px) {
+      .masthead,
+      .hero-ledger,
+      .storyline,
+      .proof-sheet {
+        grid-template-columns: 1fr;
+      }
+
+      .dispatch-note {
+        justify-self: start;
+        text-align: left;
+      }
+
+      .callout-line,
+      .metrics-wall {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100% - 18px, 1220px);
+      }
+
+      .masthead {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .masthead-cta {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .moment {
+        grid-template-columns: 1fr;
+      }
+
+      .control-board {
+        padding: 14px;
+      }
+
+      h1 {
+        max-width: 9ch;
+      }
+
+      footer {
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div class="stamp">
+        <div class="stamp-mark">R</div>
+        <div>
+          Relayroom
+          <div>Ops Workflow Office</div>
+        </div>
+      </div>
+      <div class="dispatch-note">No-code automation for operations managers who run the shift, chase exceptions, and still need clean handoffs by 5:00 PM.</div>
+      <div class="masthead-cta">
+        <a class="text-link" href="#daybook">See a day in motion</a>
+        <a class="solid-link" href="#handoff">Book a workflow review</a>
+      </div>
+    </header>
+
+    <section class="hero-ledger">
+      <div class="headline-panel">
+        <div class="eyeline">
+          <span>Live queue</span>
+          <span>Returns</span>
+          <span>Vendor gaps</span>
+          <span>Fulfillment exceptions</span>
+        </div>
+        <h1>Run the whole operation without babysitting every handoff.</h1>
+        <p>Relayroom gives operations managers a no-code way to route exceptions, trigger follow-ups, collect approvals, and keep teams moving across Slack, email, ERP, WMS, and spreadsheets. The workflows are editable by ops, not buried in engineering tickets.</p>
+        <div class="hero-actions">
+          <a class="solid-link" href="#handoff">Start with your messiest process</a>
+          <a class="text-link" href="#proof">Read the shift report</a>
+        </div>
+        <div class="callout-line">
+          <div>
+            <strong>When something breaks</strong>
+            <span>Route it by location, customer tier, SKU family, or cutoff window in one visual flow.</span>
+          </div>
+          <div>
+            <strong>When the queue surges</strong>
+            <span>Auto-balance work, escalate late items, and open approval branches before SLAs slip.</span>
+          </div>
+          <div>
+            <strong>When the day ends</strong>
+            <span>Leave behind an audit trail your next shift can actually read.</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="control-board" aria-label="Workflow overview">
+        <div class="board-head">
+          <div>
+            <span>Operations board</span>
+            <strong>Tuesday exception routing</strong>
+          </div>
+          <div class="badge">117 live cases</div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">
+            <span>Intake triage</span>
+            <span>14 sec avg</span>
+          </div>
+          <p>Inbound issues are tagged by source, urgency, and impact before they hit the wrong queue.</p>
+          <div class="mini-track"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">
+            <span>Inventory hold</span>
+            <span>Auto-approved</span>
+          </div>
+          <p>Orders touching low-stock SKUs trigger hold rules, supplier checks, and buyer notifications without manual pinging.</p>
+          <div class="mini-track"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">
+            <span>Carrier failure</span>
+            <span>Regional branch</span>
+          </div>
+          <p>Missed scans spin up alternate carrier workflows by warehouse, lane, and promised delivery date.</p>
+          <div class="mini-track"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-title">
+            <span>Finance sign-off</span>
+            <span>2-step approval</span>
+          </div>
+          <p>Credit releases and refund thresholds route to the right approver with context attached.</p>
+          <div class="mini-track"><span></span><span></span><span></span><span></span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="storyline" id="daybook">
+      <div class="section-note">
+        <span>Why ops teams switch</span>
+        <h2>Instead of another dashboard, think of it as a shift log that can act.</h2>
+        <p>Most workflow tools ask ops managers to think like developers or settle for brittle if-this-then-that chains. Relayroom stays visual, but it is built for operational mess: multiple owners, messy source data, approval thresholds, cutoff times, and regional exceptions that change every week.</p>
+      </div>
+      <div class="daybook">
+        <div class="moment">
+          <strong>08:07</strong>
+          <div class="moment-card">
+            <h3>Morning queue opens with three channels already colliding.</h3>
+            <p>Slack requests, form submissions, and ERP exceptions enter one intake flow. Relayroom normalizes them, applies a <span class="scribble">same-language intake</span>, and assigns the first owner automatically.</p>
+          </div>
+        </div>
+        <div class="moment">
+          <strong>11:42</strong>
+          <div class="moment-card">
+            <h3>A supplier delay hits two warehouses and one VIP account.</h3>
+            <p>The workflow branches by site, order value, and promised ship date. High-risk orders escalate instantly; low-risk orders receive prewritten customer updates with the right timeline already merged in.</p>
+          </div>
+        </div>
+        <div class="moment">
+          <strong>14:15</strong>
+          <div class="moment-card">
+            <h3>Someone changes policy. You edit the flow yourself.</h3>
+            <p>Ops managers update thresholds, ownership rules, and fallback paths without waiting for sprint planning. Every change is versioned, visible, and reversible.</p>
+          </div>
+        </div>
+        <div class="moment">
+          <strong>17:03</strong>
+          <div class="moment-card">
+            <h3>The next shift inherits context, not a mystery pile.</h3>
+            <p>Open issues roll forward with status, decisions, timestamps, and the exact automation branch that got them there, so handoff quality stops depending on whoever remembers the most.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof-sheet" id="proof">
+      <div class="metrics-wall">
+        <article class="metric-block">
+          <strong>Workflow launch speed</strong>
+          <h3>3 days</h3>
+          <p>Typical time to map one live ops process, connect the systems, and begin routing real exceptions.</p>
+        </article>
+        <article class="metric-block">
+          <strong>Manual follow-up removed</strong>
+          <h3>61%</h3>
+          <p>Less status-chasing across Slack, inboxes, and shared sheets once routing and reminders live in the same flow.</p>
+        </article>
+        <article class="metric-block">
+          <strong>SLA exposure caught early</strong>
+          <h3>2.4x</h3>
+          <p>More at-risk orders surfaced before breach because rules run continuously instead of when someone remembers.</p>
+        </article>
+        <article class="metric-block">
+          <strong>Readable audit trail</strong>
+          <h3>Every step</h3>
+          <p>Approvals, notes, reroutes, and exceptions stay attached to the case, not scattered across tools.</p>
+        </article>
+      </div>
+
+      <div class="quote-strip">
+        <article class="quote-card">
+          <p>“We stopped hiring heroic coordinators just to translate between systems.”</p>
+          <span>Maya Chen, Director of Operations at a multi-site consumer goods team using Relayroom for order exceptions, stock transfers, and finance approvals.</span>
+        </article>
+        <article class="cta-sheet" id="handoff">
+          <span>Start where it hurts</span>
+          <h2>Bring your ugliest spreadsheet, escalation tree, or approval maze.</h2>
+          <p>We map one real process with your operations lead, turn it into a live no-code workflow, and leave your team owning the logic afterward.</p>
+          <div class="hero-actions">
+            <a class="solid-link" href="mailto:ops@relayroom.example">Request a workflow review</a>
+            <a class="text-link" href="mailto:ops@relayroom.example?subject=Send%20sample%20workflow">Ask for a sample flow</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <div>Relayroom is built for operations managers in fulfillment, logistics, procurement, support, and back-office teams that carry real handoff risk.</div>
+      <div>Connectors for Slack, Gmail, Outlook, Google Sheets, Airtable, NetSuite, ERP exports, WMS events, and custom webhooks.</div>
+    </footer>
+  </main>
+</body>
+</html>

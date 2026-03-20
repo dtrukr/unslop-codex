@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClientFlow | Client Project Management for Small Teams</title>
+  <meta
+    name="description"
+    content="ClientFlow helps small teams manage client projects, deadlines, approvals, and communication in one clean workspace."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface-strong: #ffffff;
+      --text: #1b1b18;
+      --muted: #656258;
+      --line: rgba(27, 27, 24, 0.1);
+      --primary: #0d7a63;
+      --primary-dark: #095846;
+      --accent: #f1b85b;
+      --shadow: 0 20px 60px rgba(32, 29, 20, 0.12);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --max: 1140px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(241, 184, 91, 0.25), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(13, 122, 99, 0.16), transparent 26%),
+        linear-gradient(180deg, #fcfbf8 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .page {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: 1.05rem;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #19a181);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 30px rgba(13, 122, 99, 0.28);
+      font-weight: 800;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 42px;
+      align-items: center;
+      padding: 32px 0 54px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(27, 27, 24, 0.08);
+      color: var(--primary-dark);
+      font-size: 0.88rem;
+      font-weight: 700;
+      backdrop-filter: blur(10px);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(241, 184, 91, 0.18);
+    }
+
+    h1 {
+      margin: 18px 0 16px;
+      font-size: clamp(2.7rem, 6vw, 5.3rem);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+      max-width: 11ch;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 58ch;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 28px 0 18px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 0 22px;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      cursor: pointer;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: var(--text);
+      color: white;
+      box-shadow: 0 14px 30px rgba(27, 27, 24, 0.16);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.78);
+      color: var(--text);
+      border-color: rgba(27, 27, 24, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .microproof {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .microproof span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .microproof b {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .hero-card {
+      position: relative;
+      padding: 22px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.74));
+      border: 1px solid rgba(27, 27, 24, 0.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -50px -80px auto;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(241,184,91,0.45), transparent 65%);
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .panel-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: rgba(13, 122, 99, 0.1);
+      color: var(--primary-dark);
+    }
+
+    .project-row, .task-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(27, 27, 24, 0.06);
+    }
+
+    .project-row:first-of-type,
+    .task-row:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .meta strong, .task-copy strong {
+      display: block;
+      font-size: 0.96rem;
+      letter-spacing: -0.02em;
+    }
+
+    .meta span, .task-copy span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .progress {
+      width: 92px;
+      height: 10px;
+      background: #ece7df;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 7px;
+    }
+
+    .progress > i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), #28b28e);
+    }
+
+    .task-check {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: rgba(13, 122, 99, 0.12);
+      color: var(--primary-dark);
+      font-size: 0.88rem;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat {
+      background: #fbfaf7;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 1.35rem;
+      letter-spacing: -0.05em;
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+
+    .section {
+      padding: 30px 0 70px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      letter-spacing: -0.05em;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 50ch;
+      line-height: 1.7;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(27, 27, 24, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(13,122,99,0.14), rgba(241,184,91,0.18));
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .cta-band {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      padding: 28px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #14231f, #1a302a);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-band h3 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .cta-band p {
+      margin: 0;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.7;
+      max-width: 46ch;
+    }
+
+    .signup {
+      align-self: center;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .signup label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .signup-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .signup input {
+      flex: 1 1 220px;
+      min-height: 52px;
+      border-radius: 999px;
+      border: 0;
+      padding: 0 18px;
+      font: inherit;
+      outline: none;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 0 34px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      border-top: 1px solid rgba(27, 27, 24, 0.08);
+      margin-top: 26px;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 700ms ease forwards;
+    }
+
+    .delay-1 { animation-delay: 100ms; }
+    .delay-2 { animation-delay: 200ms; }
+    .delay-3 { animation-delay: 300ms; }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .cta-band,
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head,
+      .footer,
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: 1fr; }
+      h1 { max-width: 9ch; }
+      .page { width: min(100% - 20px, var(--max)); }
+      .hero-card, .cta-band { border-radius: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function Nav() {
+      return (
+        <header className="page nav">
+          <a href="#" className="brand">
+            <span className="brand-mark">CF</span>
+            <span>ClientFlow</span>
+          </a>
+          <nav className="nav-links">
+            <a href="#features">Features</a>
+            <a href="#results">Results</a>
+            <a href="#start">Start Free</a>
+          </nav>
+        </header>
+      );
+    }
+
+    function HeroCard() {
+      const projects = [
+        { name: "Northwind Rebrand", client: "Due Friday", progress: "78%" },
+        { name: "Q2 Website Sprint", client: "Waiting for approval", progress: "52%" }
+      ];
+
+      const tasks = [
+        { title: "Send homepage mockup", note: "Acme Co · Today" },
+        { title: "Collect client feedback", note: "Northwind · 2 comments" }
+      ];
+
+      return (
+        <div className="hero-card fade-up delay-2">
+          <div className="dashboard">
+            <div className="panel">
+              <div className="panel-top">
+                <div className="panel-title">Active Projects</div>
+                <div className="pill">6 in progress</div>
+              </div>
+              {projects.map((project) => (
+                <div className="project-row" key={project.name}>
+                  <div className="meta">
+                    <strong>{project.name}</strong>
+                    <span>{project.client}</span>
+                    <div className="progress">
+                      <i style={{ width: project.progress }} />
+                    </div>
+                  </div>
+                  <strong>{project.progress}</strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="panel">
+              <div className="panel-top">
+                <div className="panel-title">Today</div>
+                <div className="pill" style={{ background: "rgba(241,184,91,0.18)", color: "#8d5e15" }}>
+                  4 priorities
+                </div>
+              </div>
+              {tasks.map((task) => (
+                <div className="task-row" key={task.title}>
+                  <div className="task-check">✓</div>
+                  <div className="task-copy" style={{ flex: 1 }}>
+                    <strong>{task.title}</strong>
+                    <span>{task.note}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="stats">
+              <div className="stat">
+                <b>31%</b>
+                <span>Faster approvals</span>
+              </div>
+              <div className="stat">
+                <b>8.4h</b>
+                <span>Saved weekly</span>
+              </div>
+              <div className="stat">
+                <b>94%</b>
+                <span>On-time delivery</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function FeatureSection() {
+      const features = [
+        {
+          icon: "01",
+          title: "Project timelines that stay clear",
+          text: "Track every client job, deadline, owner, and handoff without digging through chats and spreadsheets."
+        },
+        {
+          icon: "02",
+          title: "Approvals in one thread",
+          text: "Collect feedback, files, and sign-off in a single place so nothing gets lost between revisions."
+        },
+        {
+          icon: "03",
+          title: "Built for small teams",
+          text: "Simple enough to adopt this week, structured enough to keep delivery predictable as your workload grows."
+        }
+      ];
+
+      return (
+        <section className="page section" id="features">
+          <div className="section-head">
+            <h2 className="fade-up">Everything your team needs to keep clients moving.</h2>
+            <p className="fade-up delay-1">
+              Replace scattered updates with one focused workspace for planning, execution, and client communication.
+            </p>
+          </div>
+          <div className="feature-grid">
+            {features.map((feature, index) => (
+              <article className={`feature fade-up delay-${index + 1}`} key={feature.title}>
+                <div className="feature-icon">{feature.icon}</div>
+                <h3>{feature.title}</h3>
+                <p>{feature.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function CTASection() {
+      return (
+        <section className="page section" id="start">
+          <div className="cta-band fade-up" id="results">
+            <div>
+              <h3>Spend less time coordinating. Ship client work with confidence.</h3>
+              <p>
+                Join small agencies, studios, and service teams using ClientFlow to stay organized, impress clients,
+                and protect delivery time.
+              </p>
+            </div>
+            <form className="signup" onSubmit={(e) => e.preventDefault()}>
+              <label htmlFor="email">Start your free 14-day trial</label>
+              <div className="signup-row">
+                <input id="email" type="email" placeholder="Work email" />
+                <button className="btn btn-primary" type="submit">Get Started</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      );
+    }
+
+    function App() {
+      return (
+        <>
+          <Nav />
+          <main className="page hero">
+            <section>
+              <div className="eyebrow fade-up">
+                <span className="dot"></span>
+                Client project management for small teams
+              </div>
+              <h1 className="fade-up delay-1">Keep client work organized, visible, and on time.</h1>
+              <p className="fade-up delay-2">
+                ClientFlow gives your team one clean place to manage projects, track deadlines, collect approvals,
+                and keep clients aligned from kickoff to delivery.
+              </p>
+              <div className="cta-row fade-up delay-3">
+                <a href="#start" className="btn btn-primary">Start Free Trial</a>
+                <a href="#features" className="btn btn-secondary">See How It Works</a>
+              </div>
+              <div className="microproof fade-up delay-3">
+                <span><b>No credit card</b> to start</span>
+                <span><b>Setup in minutes</b></span>
+                <span><b>Built for 3-25 person teams</b></span>
+              </div>
+            </section>
+            <HeroCard />
+          </main>
+          <FeatureSection />
+          <CTASection />
+          <footer className="page footer">
+            <span>© 2026 ClientFlow</span>
+            <span>Made for teams who run on deadlines, feedback, and trust.</span>
+          </footer>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

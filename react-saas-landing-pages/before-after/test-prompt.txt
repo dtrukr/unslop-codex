@@ -1,0 +1,1 @@
+Design a playful React landing page for a SaaS tool that helps teachers create quizzes faster. Make the tone friendly and approachable, and include illustrated empty states and colorful section backgrounds.

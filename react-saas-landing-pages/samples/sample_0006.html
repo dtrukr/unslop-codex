@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulsehook API Monitoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09111a;
+      --panel: rgba(13, 23, 36, 0.88);
+      --panel-2: rgba(17, 30, 46, 0.9);
+      --line: rgba(148, 163, 184, 0.18);
+      --text: #eef4fb;
+      --muted: #91a1b5;
+      --accent: #56e39f;
+      --accent-2: #38bdf8;
+      --danger: #ff6b6b;
+      --warn: #f8c15c;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.14), transparent 28%),
+        radial-gradient(circle at 85% 10%, rgba(86, 227, 159, 0.12), transparent 24%),
+        linear-gradient(180deg, #071018 0%, #09111a 45%, #060d15 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .mono {
+      font-family: "IBM Plex Mono", monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      color: #b7c5d8;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 16px rgba(86, 227, 159, 0.85);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: rgba(7, 16, 24, 0.7);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(56, 189, 248, 0.95), rgba(86, 227, 159, 0.9));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 12px 28px rgba(56, 189, 248, 0.22);
+      position: relative;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      background: rgba(7, 16, 24, 0.95);
+      border-radius: 999px;
+    }
+
+    .brand-mark::before {
+      inset: 9px 8px auto 8px;
+      height: 4px;
+    }
+
+    .brand-mark::after {
+      inset: auto 8px 9px 8px;
+      height: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      font-weight: 600;
+      transition: 180ms ease;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #7df7d3);
+      color: #04110b;
+      box-shadow: 0 14px 34px rgba(86, 227, 159, 0.22);
+      border-color: transparent;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 72px 0 32px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 18px 0 18px;
+      font-size: clamp(2.9rem, 7vw, 5.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 12ch;
+    }
+
+    .hero p.lead {
+      margin: 0 0 28px;
+      color: #bfd0e4;
+      font-size: 1.1rem;
+      max-width: 58ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    .mini-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .metric-chip {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      min-width: 150px;
+    }
+
+    .metric-chip strong {
+      display: block;
+      font-size: 1.15rem;
+      margin-bottom: 2px;
+    }
+
+    .metric-chip span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .terminal {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .terminal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .lights {
+      display: flex;
+      gap: 8px;
+    }
+
+    .lights span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+    }
+
+    .lights span:nth-child(1) { background: #ff5f57; }
+    .lights span:nth-child(2) { background: #ffbd2f; }
+    .lights span:nth-child(3) { background: #28c840; }
+
+    pre {
+      margin: 0;
+      padding: 22px 22px 26px;
+      overflow: auto;
+      color: #d8e7f8;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+        rgba(4, 10, 18, 0.55);
+    }
+
+    .k { color: #7dd3fc; }
+    .s { color: #f9d66b; }
+    .n { color: #86efac; }
+    .f { color: #c4b5fd; }
+    .c { color: #7f93ab; }
+
+    .section {
+      padding: 44px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 44ch;
+    }
+
+    .stats-grid,
+    .feature-grid,
+    .logos,
+    .pricing-grid,
+    .footer-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-card,
+    .feature-card,
+    .price-card,
+    .quote-card {
+      padding: 22px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 2rem;
+      letter-spacing: -0.05em;
+      margin-bottom: 6px;
+    }
+
+    .stat-card span,
+    .feature-card p,
+    .price-card p,
+    .quote-card p,
+    .muted {
+      color: var(--muted);
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .feature-card h3,
+    .price-card h3 {
+      margin: 14px 0 10px;
+      font-size: 1.18rem;
+      letter-spacing: -0.03em;
+    }
+
+    .feature-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(86, 227, 159, 0.18), rgba(56, 189, 248, 0.18));
+      border: 1px solid rgba(86, 227, 159, 0.16);
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.82rem;
+    }
+
+    .integration-strip {
+      padding: 18px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logos {
+      grid-template-columns: repeat(6, 1fr);
+      color: #b4c5da;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      text-align: center;
+    }
+
+    .logos div {
+      padding: 16px 10px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .callout-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .list-item {
+      display: flex;
+      gap: 12px;
+      align-items: start;
+      color: #d7e4f5;
+    }
+
+    .list-item b {
+      color: var(--accent);
+      font-size: 0.9rem;
+      padding-top: 2px;
+    }
+
+    .price-value {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin: 6px 0 14px;
+    }
+
+    .price-value strong {
+      font-size: 2.6rem;
+      letter-spacing: -0.06em;
+    }
+
+    .price-value span {
+      color: var(--muted);
+    }
+
+    .pricing-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .price-card.featured {
+      position: relative;
+      border-color: rgba(86, 227, 159, 0.34);
+      box-shadow: 0 28px 80px rgba(86, 227, 159, 0.09);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(86, 227, 159, 0.12);
+      color: var(--accent);
+      font-size: 0.78rem;
+      border: 1px solid rgba(86, 227, 159, 0.18);
+      font-weight: 600;
+    }
+
+    .quote-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+    }
+
+    .quote-card strong {
+      display: block;
+      margin-top: 16px;
+    }
+
+    footer {
+      padding: 28px 0 48px;
+      color: var(--muted);
+    }
+
+    .footer-grid {
+      grid-template-columns: 1.1fr auto;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .callout-grid,
+      .stats-grid,
+      .feature-grid,
+      .pricing-grid,
+      .logos,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      h1 { max-width: 11ch; }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(100% - 28px, 1180px);
+      }
+
+      .hero {
+        padding-top: 46px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      pre {
+        font-size: 0.82rem;
+        padding: 18px;
+      }
+
+      .metric-chip {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <span class="brand-mark"></span>
+        <span>Pulsehook</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#product">Product</a>
+        <a href="#integrations">Integrations</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#docs">Docs</a>
+      </nav>
+      <a href="#pricing" class="btn btn-secondary">Start Free</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> API uptime without dashboard theater</div>
+          <h1>Monitor every endpoint your revenue depends on.</h1>
+          <p class="lead">
+            Pulsehook gives technical founders a hard signal on API health: latency, status drift, auth failures,
+            and region-specific regressions. Lightweight checks, deploy-aware alerts, and traces that point to the failing layer fast.
+          </p>
+          <div class="hero-actions">
+            <a href="#pricing" class="btn btn-primary">Ship Monitoring in 5 Minutes</a>
+            <a href="#product" class="btn btn-secondary">See Product Surface</a>
+          </div>
+          <div class="mini-metrics">
+            <div class="metric-chip">
+              <strong>99.982%</strong>
+              <span>avg. monitored uptime last 30d</span>
+            </div>
+            <div class="metric-chip">
+              <strong>&lt; 27s</strong>
+              <span>median alert delivery time</span>
+            </div>
+            <div class="metric-chip">
+              <strong>12 regions</strong>
+              <span>global synthetic check coverage</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel terminal">
+          <div class="terminal-top mono">
+            <div class="lights"><span></span><span></span><span></span></div>
+            <span>live-check.ts</span>
+          </div>
+          <pre class="mono"><span class="c">// Deploy-aware API monitor with assertions</span>
+<span class="k">import</span> { <span class="n">monitor</span> } <span class="k">from</span> <span class="s">"@pulsehook/sdk"</span>
+
+<span class="k">await</span> <span class="f">monitor</span>({
+  name: <span class="s">"billing-api-prod"</span>,
+  schedule: <span class="s">"*/1 * * * *"</span>,
+  regions: [<span class="s">"iad"</span>, <span class="s">"fra"</span>, <span class="s">"sin"</span>],
+  request: {
+    url: <span class="s">"https://api.acme.dev/v1/invoices"</span>,
+    method: <span class="s">"GET"</span>,
+    headers: { Authorization: <span class="s">`Bearer ${process.env.MONITOR_TOKEN}`</span> }
+  },
+  expect: [
+    { status: <span class="n">200</span> },
+    { jsonpath: <span class="s">"$.data[0].id"</span>, exists: <span class="k">true</span> },
+    { latencyMs: { lt: <span class="n">450</span> } }
+  ],
+  alerts: [<span class="s">"slack:#ops"</span>, <span class="s">"pagerduty:primary"</span>]
+})
+
+<span class="c">// Last incident: auth regression isolated to eu-west in 3m 12s</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="product">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">What Founders Actually Need</div>
+            <h2>Visibility that maps to outages, not vanity charts.</h2>
+          </div>
+          <p>
+            Built for teams where the same people ship code, handle incidents, and answer enterprise customers.
+            Fast setup, precise alerts, and evidence you can trust under pressure.
+          </p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="panel stat-card">
+            <strong>4.8B+</strong>
+            <span>requests checked per month across customer monitors</span>
+          </div>
+          <div class="panel stat-card">
+            <strong>310ms</strong>
+            <span>p95 added overhead for authenticated checks</span>
+          </div>
+          <div class="panel stat-card">
+            <strong>0 false pages</strong>
+            <span>after quorum confirmation and retry guards</span>
+          </div>
+          <div class="panel stat-card">
+            <strong>14 days</strong>
+            <span>full-resolution retention on traces and payload diffs</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container feature-grid">
+        <div class="panel feature-card">
+          <div class="feature-icon">HTTP</div>
+          <h3>Assert the contract, not just the status code</h3>
+          <p>
+            Validate auth, schema fragments, JSON paths, and latency budgets in a single monitor.
+            Catch partial failures before your customers do.
+          </p>
+        </div>
+
+        <div class="panel feature-card">
+          <div class="feature-icon">DEP</div>
+          <h3>Tie incidents to deploys automatically</h3>
+          <p>
+            Connect Vercel, GitHub, Render, or your CI pipeline. Pulsehook annotates failures with commit SHA,
+            rollout window, and environment drift.
+          </p>
+        </div>
+
+        <div class="panel feature-card">
+          <div class="feature-icon">RCA</div>
+          <h3>Debug from the alert itself</h3>
+          <p>
+            Alerts include region, response snippet, timing waterfall, and the exact assertion that failed.
+            Less dashboard clicking, faster root cause isolation.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="integrations">
+      <div class="container">
+        <div class="panel integration-strip">
+          <div>
+            <div class="eyebrow">Integrations</div>
+            <div style="margin-top:10px; font-size:1.15rem; font-weight:700;">Fits the stack you already run.</div>
+          </div>
+          <div class="muted">Slack, PagerDuty, GitHub, Vercel, Datadog, OpenTelemetry, webhooks</div>
+        </div>
+        <div class="logos" style="margin-top:18px;">
+          <div>GitHub</div>
+          <div>Vercel</div>
+          <div>Slack</div>
+          <div>PagerDuty</div>
+          <div>Datadog</div>
+          <div>OTel</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container callout-grid">
+        <div class="panel quote-card">
+          <div>
+            <div class="eyebrow">Founder Signal</div>
+            <p style="font-size:1.14rem; color:#eaf3fb; margin-top:18px;">
+              “We replaced three disconnected tools with Pulsehook and cut incident confirmation from 11 minutes to under 2.
+              It tells us whether the API is down, degraded, or just lying.”
+            </p>
+          </div>
+          <div>
+            <strong>Rina Solberg</strong>
+            <span class="muted">CTO, Ledgerlane</span>
+          </div>
+        </div>
+
+        <div class="panel" id="docs">
+          <div class="terminal-top mono">
+            <span>curl + config</span>
+            <span>docs.pulsehook.dev</span>
+          </div>
+          <pre class="mono"><span class="c"># Provision a monitor from CI during deploy</span>
+curl -X POST <span class="s">https://api.pulsehook.dev/v1/monitors</span> \
+  -H <span class="s">"Authorization: Bearer $PULSEHOOK_API_KEY"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="s">"name"</span>: <span class="s">"auth-service-prod"</span>,
+    <span class="s">"frequency"</span>: <span class="s">"60s"</span>,
+    <span class="s">"request"</span>: { <span class="s">"url"</span>: <span class="s">"https://api.acme.dev/auth/health"</span> },
+    <span class="s">"expect"</span>: [{ <span class="s">"status"</span>: <span class="n">200</span> }, { <span class="s">"bodyContains"</span>: <span class="s">"ok"</span> }]
+  }'
+
+<span class="c"># Terraform provider and TypeScript SDK included</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Pricing</div>
+            <h2>Start lean. Add coverage as the blast radius grows.</h2>
+          </div>
+          <p>
+            No seat tax. Pay for monitored endpoints and execution volume, which is what actually drives operational complexity.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="panel price-card">
+            <h3>Starter</h3>
+            <div class="price-value">
+              <strong>$79</strong>
+              <span>/month</span>
+            </div>
+            <p>For early-stage products with a few critical APIs and a founder on pager rotation.</p>
+            <div class="list">
+              <div class="list-item"><b>01</b><span>25 monitors, 1-minute checks, 5 regions</span></div>
+              <div class="list-item"><b>02</b><span>Slack + email alerts, deploy annotations</span></div>
+              <div class="list-item"><b>03</b><span>14-day trace retention, shared dashboards</span></div>
+            </div>
+            <div style="margin-top:20px;"><a href="#" class="btn btn-secondary">Start 14-Day Trial</a></div>
+          </div>
+
+          <div class="panel price-card featured">
+            <span class="badge">Most Common</span>
+            <h3>Scale</h3>
+            <div class="price-value">
+              <strong>$249</strong>
+              <span>/month</span>
+            </div>
+            <p>For teams selling to paying customers where downtime moves churn, support load, and expansion risk.</p>
+            <div class="list">
+              <div class="list-item"><b>01</b><span>150 monitors, sub-minute checks, 12 regions</span></div>
+              <div class="list-item"><b>02</b><span>PagerDuty, Datadog, webhooks, SSO</span></div>
+              <div class="list-item"><b>03</b><span>90-day retention, incident timelines, RBAC</span></div>
+            </div>
+            <div style="margin-top:20px;"><a href="#" class="btn btn-primary">Book Technical Demo</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container panel" style="padding: 28px;">
+        <div class="section-head" style="margin-bottom:14px;">
+          <div>
+            <div class="eyebrow">Why Teams Switch</div>
+            <h2>Most monitoring tools tell you something failed. Pulsehook tells you what to do next.</h2>
+          </div>
+        </div>
+        <div class="list">
+          <div class="list-item"><b>01</b><span>Checks run from multiple regions with quorum logic, so a single edge blip does not wake your team up.</span></div>
+          <div class="list-item"><b>02</b><span>Payload diffs show what changed between the last good response and the first bad one, which matters for API regressions.</span></div>
+          <div class="list-item"><b>03</b><span>Monitors are defined as code, versioned in Git, and provisioned through API, Terraform, or CI during deploy.</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:8px;">
+          <span class="brand-mark"></span>
+          <span>Pulsehook</span>
+        </div>
+        <div>API monitoring for technical founders who need hard evidence, fast.</div>
+      </div>
+      <div class="mono" style="font-size:0.88rem;">status.pulsehook.dev · docs.pulsehook.dev · api.pulsehook.dev</div>
+    </div>
+  </footer>
+
+  <script>
+    const chips = document.querySelectorAll('.metric-chip, .stat-card, .feature-card, .price-card, .quote-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.animate(
+            [
+              { opacity: 0, transform: 'translateY(16px)' },
+              { opacity: 1, transform: 'translateY(0)' }
+            ],
+            { duration: 520, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' }
+          );
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+
+    chips.forEach((el) => {
+      el.style.opacity = '0';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

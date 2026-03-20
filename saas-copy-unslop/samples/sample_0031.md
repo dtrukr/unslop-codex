@@ -1,0 +1,5 @@
+Created a standalone landing page at [devops-risk-saas-landing.html](/Users/dennis/git/unslop-codex/devops-risk-saas-landing.html).
+
+The page uses an industrial control-room visual direction with warm neutral tones instead of the usual dark DevOps trope, and the copy is aimed at technical buyers: deployment risk scoring, release evidence, policy guardrails, and audit-ready outcomes. The main pieces are the hero and live risk panel at [devops-risk-saas-landing.html#L838](/Users/dennis/git/unslop-codex/devops-risk-saas-landing.html#L838), the platform/value section for buyers at [devops-risk-saas-landing.html#L968](/Users/dennis/git/unslop-codex/devops-risk-saas-landing.html#L968), and the closing CTA at [devops-risk-saas-landing.html#L1056](/Users/dennis/git/unslop-codex/devops-risk-saas-landing.html#L1056). Responsive behavior and reduced-motion handling are built into the CSS at [devops-risk-saas-landing.html#L747](/Users/dennis/git/unslop-codex/devops-risk-saas-landing.html#L747).
+
+Verification: the HTML parses cleanly with Python’s `html.parser`. I did not run a browser-based visual QA pass.

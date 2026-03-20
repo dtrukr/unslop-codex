@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northstar | Subscription Analytics for Shopify Brands</title>
+  <meta name="description" content="Northstar helps Shopify subscription brands spot churn, lift LTV, and act on revenue risk before it hits." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root{
+      --bg:#f5efe6;
+      --paper:#fbf7f1;
+      --ink:#1f1b17;
+      --muted:#655b50;
+      --line:rgba(31,27,23,.12);
+      --card:#f9f3eb;
+      --accent:#cb5b31;
+      --accent-2:#235948;
+      --accent-3:#e8c98d;
+      --shadow:0 20px 60px rgba(62,40,20,.10);
+      --radius:24px;
+      --max:1180px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"Plus Jakarta Sans",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(232,201,141,.45), transparent 30%),
+        radial-gradient(circle at 90% 15%, rgba(35,89,72,.10), transparent 24%),
+        linear-gradient(180deg, #f7f0e7 0%, #f4ede4 52%, #f8f4ee 100%);
+      line-height:1.5;
+    }
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    .container{width:min(calc(100% - 32px),var(--max));margin:0 auto}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:.55rem;
+      padding:.45rem .8rem;border:1px solid var(--line);
+      border-radius:999px;background:rgba(251,247,241,.75);
+      color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase
+    }
+    .serif{font-family:"Instrument Serif",serif;font-weight:400}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:.65rem;
+      min-height:52px;padding:0 1.15rem;border-radius:999px;
+      border:1px solid transparent;font-weight:700;font-size:.98rem;transition:.25s ease
+    }
+    .btn-primary{background:var(--ink);color:var(--paper);box-shadow:var(--shadow)}
+    .btn-primary:hover{transform:translateY(-2px);background:#151210}
+    .btn-secondary{border-color:var(--line);background:rgba(251,247,241,.7)}
+    .btn-secondary:hover{transform:translateY(-2px);background:rgba(255,255,255,.92)}
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:blur(14px);background:rgba(245,239,230,.72);
+      border-bottom:1px solid rgba(31,27,23,.08)
+    }
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 0
+    }
+    .brand{
+      display:flex;align-items:center;gap:.8rem;font-weight:800;letter-spacing:-.03em
+    }
+    .brand-mark{
+      width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),#d58f51 65%, var(--accent-3));
+      color:#fff;font-weight:800;box-shadow:0 10px 30px rgba(203,91,49,.25)
+    }
+    .nav-links{display:none;gap:1.25rem;color:var(--muted);font-weight:600}
+    .hero{
+      padding:34px 0 28px
+    }
+    .hero-grid{
+      display:grid;grid-template-columns:1fr;gap:24px;align-items:start
+    }
+    .hero-copy h1{
+      margin:.9rem 0 1rem;font-size:clamp(2.7rem,8vw,6.4rem);line-height:.94;
+      letter-spacing:-.06em;max-width:11ch
+    }
+    .hero-copy p{
+      margin:0;max-width:34rem;font-size:1.03rem;color:var(--muted)
+    }
+    .hero-actions{
+      display:flex;flex-wrap:wrap;gap:.85rem;margin:1.5rem 0 1.15rem
+    }
+    .hero-proof{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:1rem
+    }
+    .proof-chip{
+      padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:rgba(251,247,241,.72)
+    }
+    .proof-chip strong{display:block;font-size:1.1rem;letter-spacing:-.04em}
+    .proof-chip span{color:var(--muted);font-size:.88rem}
+    .hero-panel{
+      position:relative;padding:18px;border-radius:30px;background:linear-gradient(180deg,#fff8f0,#f0e7db);
+      border:1px solid rgba(31,27,23,.08);box-shadow:var(--shadow);overflow:hidden
+    }
+    .hero-panel::before{
+      content:"";position:absolute;inset:auto -12% -20% auto;width:240px;height:240px;border-radius:50%;
+      background:radial-gradient(circle, rgba(203,91,49,.25), transparent 60%)
+    }
+    .dashboard{
+      position:relative;background:#201b17;color:#f8f2ea;border-radius:24px;padding:16px;
+      min-height:420px;overflow:hidden
+    }
+    .dash-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+    .dash-pill{padding:.42rem .72rem;border-radius:999px;background:rgba(255,255,255,.07);font-size:.78rem;color:#dbcfc1}
+    .dash-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:12px}
+    .stat{
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px
+    }
+    .stat small,.signal li span,.mini-card p{color:#c8bbad}
+    .stat strong{display:block;font-size:1.8rem;letter-spacing:-.05em}
+    .chart{
+      height:180px;border-radius:18px;padding:12px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+      display:flex;align-items:flex-end;gap:8px
+    }
+    .bar{
+      flex:1;border-radius:14px 14px 6px 6px;background:linear-gradient(180deg,var(--accent-3),var(--accent));
+      opacity:.94;position:relative
+    }
+    .bar::after{
+      content:"";position:absolute;left:0;right:0;top:0;height:35%;
+      background:linear-gradient(180deg,rgba(255,255,255,.28),transparent)
+    }
+    .signal{padding:0;margin:0;list-style:none;display:grid;gap:10px}
+    .signal li{
+      display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)
+    }
+    .signal li:last-child{border-bottom:none}
+    .signal strong{font-size:.96rem}
+    .mini-card{
+      margin-top:12px;padding:14px;border-radius:18px;background:linear-gradient(135deg,rgba(232,201,141,.16),rgba(203,91,49,.08));
+      border:1px solid rgba(232,201,141,.18)
+    }
+    .mini-card h4{margin:0 0 6px;font-size:1rem}
+    .section{
+      padding:28px 0
+    }
+    .logos{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px
+    }
+    .logo{
+      display:grid;place-items:center;min-height:64px;border:1px solid var(--line);
+      border-radius:18px;background:rgba(251,247,241,.6);font-weight:800;color:#54493f;letter-spacing:.08em;font-size:.82rem
+    }
+    .feature-wrap{
+      display:grid;grid-template-columns:1fr;gap:16px
+    }
+    .feature-card{
+      padding:22px;border-radius:24px;background:rgba(251,247,241,.75);border:1px solid var(--line)
+    }
+    .feature-card h3{
+      margin:.35rem 0 .5rem;font-size:1.35rem;letter-spacing:-.04em
+    }
+    .feature-card p{margin:0;color:var(--muted)}
+    .kpi{
+      margin-top:16px;padding-top:16px;border-top:1px solid var(--line);
+      display:flex;justify-content:space-between;gap:12px;align-items:end
+    }
+    .kpi strong{font-size:1.7rem;letter-spacing:-.05em}
+    .split{
+      display:grid;grid-template-columns:1fr;gap:18px;align-items:center
+    }
+    .story{
+      padding:24px;border-radius:28px;background:#efe5d8;border:1px solid rgba(31,27,23,.08)
+    }
+    .story-quote{
+      margin:0;font-size:clamp(1.5rem,3vw,2.4rem);line-height:1.04;letter-spacing:-.05em
+    }
+    .story-meta{
+      margin-top:18px;color:var(--muted);font-weight:600
+    }
+    .compare{
+      background:rgba(251,247,241,.8);border-radius:28px;border:1px solid var(--line);overflow:hidden
+    }
+    .compare-row{
+      display:grid;grid-template-columns:1.35fr .8fr .8fr;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)
+    }
+    .compare-row:last-child{border-bottom:none}
+    .compare-row.head{background:#f2eadf;font-weight:800}
+    .check{font-weight:800;color:var(--accent-2)}
+    .x{color:#b78a68}
+    .pricing{
+      padding:26px;border-radius:32px;background:linear-gradient(135deg,#241e19,#1a1613);
+      color:#f6eee4;box-shadow:var(--shadow)
+    }
+    .pricing-grid{
+      display:grid;grid-template-columns:1fr;gap:20px;align-items:start
+    }
+    .price{
+      font-size:clamp(3rem,8vw,4.7rem);line-height:.95;letter-spacing:-.06em;margin:.5rem 0
+    }
+    .price small{font-size:1rem;letter-spacing:0;color:#c9bdaf}
+    .pricing-list{
+      list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px;color:#ddd0c3
+    }
+    .pricing-list li{
+      padding-left:1.4rem;position:relative
+    }
+    .pricing-list li::before{
+      content:"•";position:absolute;left:.25rem;color:var(--accent-3)
+    }
+    .footer{
+      padding:26px 0 40px;color:var(--muted);font-size:.94rem
+    }
+    .fade-up{opacity:0;transform:translateY(18px);animation:fadeUp .8s cubic-bezier(.22,1,.36,1) forwards}
+    .delay-1{animation-delay:.08s}.delay-2{animation-delay:.16s}.delay-3{animation-delay:.24s}.delay-4{animation-delay:.32s}
+    @keyframes fadeUp{to{opacity:1;transform:none}}
+    @media (min-width: 760px){
+      .nav-links{display:flex}
+      .hero{padding:52px 0 40px}
+      .hero-grid{grid-template-columns:1.05fr .95fr;gap:34px}
+      .hero-proof{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .logos{grid-template-columns:repeat(6,minmax(0,1fr))}
+      .feature-wrap{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .split{grid-template-columns:1fr 1.05fr}
+      .pricing-grid{grid-template-columns:1fr .95fr}
+    }
+    @media (max-width: 759px){
+      .desktop-only{display:none}
+      .dash-grid{grid-template-columns:1fr}
+      .compare-row{grid-template-columns:1.3fr .8fr .8fr;font-size:.92rem}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .fade-up{animation:none;opacity:1;transform:none}
+      .btn{transition:none}
+      html{scroll-behavior:auto}
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const stats = [
+      { value: "18%", label: "average churn reduction in 60 days" },
+      { value: "11.4%", label: "more recovered MRR from save flows" },
+      { value: "2.3x", label: "faster answers than manual exports" },
+      { value: "24/7", label: "revenue risk alerts for your team" }
+    ];
+
+    const features = [
+      {
+        title: "See churn before it lands",
+        copy: "Northstar surfaces cancellation spikes, failed charge pockets, and cohort drop-off before they become a board slide.",
+        kpi: "47 hrs",
+        sub: "average lead time before a material churn event"
+      },
+      {
+        title: "Trace LTV by cohort, plan, and campaign",
+        copy: "Stop treating subscribers like one bucket. Break revenue down by acquisition source, SKU, interval, and retention behavior.",
+        kpi: "+22%",
+        sub: "median lift from reallocating paid spend using cohort truth"
+      },
+      {
+        title: "Give operators the next move",
+        copy: "Every alert comes with the segment, likely cause, and the highest-confidence action so your retention team can move immediately.",
+        kpi: "1 click",
+        sub: "from insight to segment handoff"
+      }
+    ];
+
+    const App = () => (
+      <>
+        <header className="topbar">
+          <div className="container nav">
+            <a href="#" className="brand">
+              <span className="brand-mark">N</span>
+              <span>Northstar</span>
+            </a>
+            <nav className="nav-links">
+              <a href="#product">Product</a>
+              <a href="#proof">Proof</a>
+              <a href="#pricing">Pricing</a>
+            </nav>
+            <a href="#pricing" className="btn btn-secondary desktop-only">Book a Demo</a>
+          </div>
+        </header>
+
+        <main>
+          <section className="hero">
+            <div className="container hero-grid">
+              <div className="hero-copy">
+                <div className="eyebrow fade-up">Built for Shopify subscription brands</div>
+                <h1 className="fade-up delay-1">
+                  Turn subscription data into <span className="serif" style={{fontStyle:"italic"}}>retention revenue</span>.
+                </h1>
+                <p className="fade-up delay-2">
+                  Northstar gives growth, finance, and retention teams one live view of churn risk, LTV, and recovery opportunities so decisions happen before revenue slips away.
+                </p>
+                <div className="hero-actions fade-up delay-3">
+                  <a href="#pricing" className="btn btn-primary">See Northstar in Action</a>
+                  <a href="#proof" className="btn btn-secondary">View the Revenue Signals</a>
+                </div>
+                <div className="hero-proof fade-up delay-4">
+                  {stats.map((item) => (
+                    <div className="proof-chip" key={item.label}>
+                      <strong>{item.value}</strong>
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hero-panel fade-up delay-2">
+                <div className="dashboard">
+                  <div className="dash-top">
+                    <div>
+                      <div style={{fontSize:".82rem", color:"#c8bbad"}}>Revenue Pulse</div>
+                      <div style={{fontWeight:800, fontSize:"1.15rem"}}>$412,380 projected subscription MRR</div>
+                    </div>
+                    <div className="dash-pill">Alert: 3 cohorts drifting</div>
+                  </div>
+
+                  <div className="dash-grid">
+                    <div>
+                      <div className="stat" style={{marginBottom:"12px"}}>
+                        <small>At-risk MRR this week</small>
+                        <strong>$28.4k</strong>
+                        <small>Driven by failed payments in month-2 cacao bundle subscribers</small>
+                      </div>
+                      <div className="chart" aria-label="bar chart">
+                        {[46, 64, 58, 86, 72, 94, 120].map((h, i) => (
+                          <div className="bar" key={i} style={{height: `${h}px`}} />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="stat">
+                        <small>Highest-confidence saves</small>
+                        <ul className="signal">
+                          <li><strong>Retry + SMS reminder</strong><span>82% confidence</span></li>
+                          <li><strong>Swap product instead of skip</strong><span>74% confidence</span></li>
+                          <li><strong>Quarterly upgrade prompt</strong><span>69% confidence</span></li>
+                        </ul>
+                      </div>
+                      <div className="mini-card">
+                        <h4>Most valuable insight</h4>
+                        <p style={{margin:0}}>Customers acquired through creator bundles hold 1.8x higher 6-month LTV when nudged into 60-day prepaid plans by order three.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="section" id="proof">
+            <div className="container">
+              <div className="eyebrow">Trusted by retention-led teams</div>
+              <div className="logos">
+                {["FLOURISH", "MELLOW", "NOURI", "ATLAS", "VELA", "KINFIELD"].map((logo) => (
+                  <div className="logo" key={logo}>{logo}</div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="section" id="product">
+            <div className="container">
+              <div style={{maxWidth:"44rem", marginBottom:"18px"}}>
+                <div className="eyebrow">Why it converts</div>
+                <h2 style={{fontSize:"clamp(2rem,5vw,4rem)", lineHeight:.98, letterSpacing:"-.05em", margin:"12px 0 10px"}}>
+                  Replace spreadsheets, lagging reports, and guesswork with one operating layer for recurring revenue.
+                </h2>
+                <p style={{margin:0, color:"var(--muted)", maxWidth:"40rem"}}>
+                  Northstar is built for brands where subscriber retention changes cash flow, inventory planning, and paid acquisition efficiency.
+                </p>
+              </div>
+
+              <div className="feature-wrap">
+                {features.map((feature) => (
+                  <article className="feature-card" key={feature.title}>
+                    <div className="eyebrow">{feature.title.split(" ")[0]}</div>
+                    <h3>{feature.title}</h3>
+                    <p>{feature.copy}</p>
+                    <div className="kpi">
+                      <div>
+                        <strong>{feature.kpi}</strong>
+                        <div style={{color:"var(--muted)", fontSize:".92rem"}}>{feature.sub}</div>
+                      </div>
+                      <div style={{width:"56px", height:"56px", borderRadius:"18px", background:"linear-gradient(135deg, rgba(203,91,49,.18), rgba(35,89,72,.16))"}}></div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="section">
+            <div className="container split">
+              <div className="story">
+                <div className="eyebrow">Operator proof</div>
+                <p className="story-quote">
+                  “We stopped debating what happened and started acting on what would happen next. Northstar paid for itself in the first failed-payment sprint.”
+                </p>
+                <div className="story-meta">Maya Chen, VP Growth at a 7-figure Shopify subscription brand</div>
+              </div>
+
+              <div className="compare">
+                <div className="compare-row head">
+                  <div></div>
+                  <div>Northstar</div>
+                  <div>Manual stack</div>
+                </div>
+                <div className="compare-row">
+                  <div>Live churn-risk alerts</div>
+                  <div className="check">Yes</div>
+                  <div className="x">No</div>
+                </div>
+                <div className="compare-row">
+                  <div>Cohort LTV by channel and SKU</div>
+                  <div className="check">Yes</div>
+                  <div className="x">Partial</div>
+                </div>
+                <div className="compare-row">
+                  <div>Recommended save actions</div>
+                  <div className="check">Yes</div>
+                  <div className="x">No</div>
+                </div>
+                <div className="compare-row">
+                  <div>Executive-ready reporting</div>
+                  <div className="check">In minutes</div>
+                  <div className="x">In days</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="section" id="pricing">
+            <div className="container">
+              <div className="pricing">
+                <div className="pricing-grid">
+                  <div>
+                    <div className="eyebrow" style={{background:"rgba(255,255,255,.06)", borderColor:"rgba(255,255,255,.12)", color:"#d8ccbf"}}>Launch offer</div>
+                    <h2 style={{fontSize:"clamp(2.2rem,5vw,4.2rem)", lineHeight:.96, letterSpacing:"-.06em", margin:"14px 0 10px"}}>
+                      Start with the dashboard your retention team actually uses.
+                    </h2>
+                    <p style={{margin:0, color:"#d4c8bb", maxWidth:"36rem"}}>
+                      Connect Shopify, subscription events, and payment data. See the first churn map in days, not quarters.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="price">$799 <small>/month</small></div>
+                    <div style={{color:"#d4c8bb"}}>For brands up to $5M in annual subscription revenue. Includes onboarding, weekly alerting, and unlimited seats.</div>
+                    <div className="hero-actions" style={{marginBottom:0}}>
+                      <a href="#" className="btn btn-primary" style={{background:"var(--accent)", color:"#fff"}}>Book a 20-Min Demo</a>
+                      <a href="#" className="btn btn-secondary" style={{background:"transparent", color:"#f6eee4", borderColor:"rgba(255,255,255,.18)"}}>Get the Sample Dashboard</a>
+                    </div>
+                    <ul className="pricing-list">
+                      <li>Shopify and subscription app integrations</li>
+                      <li>Churn, failed-payment, and cohort performance alerts</li>
+                      <li>LTV views by channel, product, and interval</li>
+                      <li>Slack-ready weekly revenue brief</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer className="footer">
+          <div className="container" style={{display:"flex", justifyContent:"space-between", gap:"12px", flexWrap:"wrap"}}>
+            <div>Northstar for Shopify subscription operators.</div>
+            <div>See risk early. Keep more revenue.</div>
+          </div>
+        </footer>
+      </>
+    );
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

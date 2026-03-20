@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClarityOS | AI Notes for Busy Professionals</title>
+  <meta
+    name="description"
+    content="ClarityOS turns meetings, voice notes, and scattered thoughts into organized action. Built for busy professionals who need less admin and more momentum."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5efe4;
+      --paper: rgba(255, 252, 245, 0.78);
+      --card: rgba(255, 255, 255, 0.74);
+      --ink: #13211d;
+      --muted: #53625a;
+      --line: rgba(19, 33, 29, 0.1);
+      --accent: #0f766e;
+      --accent-2: #f97316;
+      --accent-3: #dbeafe;
+      --shadow: 0 20px 60px rgba(19, 33, 29, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(249, 115, 22, 0.16), transparent 28%),
+        radial-gradient(circle at 85% 12%, rgba(15, 118, 110, 0.18), transparent 32%),
+        linear-gradient(180deg, #fcf8f1 0%, #f4edde 44%, #f5efe4 100%);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 16px;
+      z-index: 30;
+      margin-top: 16px;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 18px;
+      background: rgba(255, 250, 241, 0.72);
+      border: 1px solid rgba(19, 33, 29, 0.08);
+      backdrop-filter: blur(16px);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(19, 33, 29, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), #14b8a6);
+      color: white;
+      font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 15px;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--ink);
+      color: white;
+      box-shadow: 0 10px 24px rgba(19, 33, 29, 0.16);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.58);
+      border-color: rgba(19, 33, 29, 0.12);
+      color: var(--ink);
+    }
+
+    .hero {
+      padding: 62px 0 34px;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.62);
+      border: 1px solid rgba(19, 33, 29, 0.08);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-2);
+      box-shadow: 0 0 0 5px rgba(249, 115, 22, 0.12);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 78px);
+      line-height: 0.95;
+      letter-spacing: -0.055em;
+      max-width: 10.5ch;
+    }
+
+    .display {
+      font-family: "DM Serif Display", serif;
+      font-weight: 400;
+      font-style: italic;
+      color: #285b53;
+    }
+
+    .lead {
+      margin: 22px 0 28px;
+      max-width: 60ch;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.68;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px 24px;
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .hero-card {
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,250,245,0.72));
+      border: 1px solid rgba(19, 33, 29, 0.08);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 560px;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(15, 118, 110, 0.14), transparent 24%),
+        radial-gradient(circle at 78% 12%, rgba(249, 115, 22, 0.16), transparent 20%);
+      pointer-events: none;
+    }
+
+    .app-window {
+      position: relative;
+      margin: 18px;
+      padding: 18px;
+      border-radius: 24px;
+      background: rgba(248, 244, 237, 0.88);
+      border: 1px solid rgba(19, 33, 29, 0.08);
+      min-height: calc(100% - 36px);
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 18px;
+    }
+
+    .sidebar, .workspace, .mini-card, .quote, .pricing-card, .feature {
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+    }
+
+    .sidebar {
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .workspace {
+      border-radius: 22px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .sidebar-title, .section-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #738077;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .nav-item {
+      padding: 12px 13px;
+      border-radius: 16px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+      background: transparent;
+    }
+
+    .nav-item.active {
+      color: var(--ink);
+      background: linear-gradient(90deg, rgba(15, 118, 110, 0.12), rgba(15, 118, 110, 0.03));
+    }
+
+    .transcript {
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fffdf8, #f6f0e7);
+      padding: 16px;
+      border: 1px solid var(--line);
+    }
+
+    .transcript h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .transcript p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mini-card {
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .mini-label {
+      font-size: 12px;
+      color: #738077;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    .mini-value {
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .mini-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .section {
+      padding: 34px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      letter-spacing: -0.045em;
+      line-height: 1.02;
+      max-width: 11ch;
+    }
+
+    .section-copy {
+      max-width: 58ch;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      min-height: 210px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,248,241,0.68));
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      font-size: 20px;
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(249, 115, 22, 0.16));
+    }
+
+    .feature h3, .pricing-card h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .quote {
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,249,243,0.66));
+    }
+
+    .quote p {
+      margin: 0 0 16px;
+      font-size: 17px;
+      line-height: 1.7;
+      letter-spacing: -0.015em;
+    }
+
+    .person {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, #0f766e, #f97316);
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,249,244,0.72));
+    }
+
+    .price {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+
+    .price strong {
+      font-size: 54px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .price span {
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin: 20px 0 26px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .list-item {
+      display: flex;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 12px;
+      background: var(--accent);
+      flex: 0 0 auto;
+      margin-top: 2px;
+    }
+
+    .stats {
+      display: grid;
+      gap: 16px;
+      align-content: stretch;
+    }
+
+    .stat-box {
+      padding: 22px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(19,33,29,0.96), rgba(27,54,48,0.94));
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-box.alt {
+      background: linear-gradient(180deg, rgba(249,115,22,0.92), rgba(224,92,24,0.92));
+    }
+
+    .stat-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.75;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 40px;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .stat-copy {
+      font-size: 15px;
+      line-height: 1.6;
+      opacity: 0.88;
+    }
+
+    .cta {
+      padding: 34px 0 70px;
+    }
+
+    .cta-panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      padding: 36px;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(249, 115, 22, 0.18), transparent 24%),
+        radial-gradient(circle at 86% 22%, rgba(15, 118, 110, 0.18), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,249,244,0.74));
+      border: 1px solid rgba(19, 33, 29, 0.08);
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .cta-panel h2 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4.8vw, 54px);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+      max-width: 10ch;
+    }
+
+    .cta-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 58ch;
+      font-size: 16px;
+    }
+
+    .footer {
+      padding: 0 0 36px;
+      color: #66746d;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1040px) {
+      .hero,
+      .pricing,
+      .features,
+      .testimonials,
+      .app-window {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card { min-height: auto; }
+      .section-head, .cta-panel { align-items: start; flex-direction: column; }
+    }
+
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      .actions .btn-secondary { display: none; }
+      .hero { padding-top: 34px; }
+      h1 { max-width: 12ch; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .cta-panel { padding: 28px; border-radius: 28px; }
+      .pricing-card, .quote, .feature { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const features = [
+      {
+        icon: "✦",
+        title: "Capture anywhere",
+        text: "Drop in voice notes, meeting uploads, pasted thoughts, or screenshots. ClarityOS turns messy inputs into usable notes fast."
+      },
+      {
+        icon: "✓",
+        title: "Instant action items",
+        text: "Every note becomes a structured summary with deadlines, owners, and follow-ups so work moves without manual cleanup."
+      },
+      {
+        icon: "∞",
+        title: "Search by meaning",
+        text: "Ask natural questions across calls, briefs, and personal notes. Find decisions, risks, and commitments in seconds."
+      },
+      {
+        icon: "↗",
+        title: "Built for momentum",
+        text: "Daily recaps, CRM-ready summaries, and shareable note links keep clients, teams, and stakeholders aligned."
+      }
+    ];
+
+    const testimonials = [
+      {
+        quote: "ClarityOS cut my weekly meeting admin from three hours to maybe twenty minutes. It feels like having a chief of staff in my notes.",
+        name: "Maya Chen",
+        role: "Client Partner, B2B Consulting",
+        initials: "MC"
+      },
+      {
+        quote: "I stop worrying about forgetting details. Calls become decisions, and decisions become action lists without another tool chain.",
+        name: "Jordan Patel",
+        role: "Head of Operations, Growth SaaS",
+        initials: "JP"
+      },
+      {
+        quote: "The summaries are tight, the follow-ups are usable, and the search actually understands context. That part is rare.",
+        name: "Elena Brooks",
+        role: "Independent Financial Advisor",
+        initials: "EB"
+      }
+    ];
+
+    const checks = [
+      "Unlimited notes, transcripts, and AI summaries",
+      "Meeting recaps with tasks, owners, and deadlines",
+      "Semantic search across every conversation and draft",
+      "Shareable client-ready pages in one click"
+    ];
+
+    function Nav() {
+      return (
+        <div className="nav shell fade-up" style={{ animationDelay: "0.05s" }}>
+          <div className="nav-inner">
+            <a className="brand" href="#">
+              <span className="brand-mark">C</span>
+              <span>ClarityOS</span>
+            </a>
+            <div className="nav-links">
+              <a href="#features">Features</a>
+              <a href="#stories">Stories</a>
+              <a href="#pricing">Pricing</a>
+            </div>
+            <div className="actions">
+              <a className="btn btn-secondary" href="#pricing">See pricing</a>
+              <a className="btn btn-primary" href="#cta">Start free</a>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Hero() {
+      return (
+        <section className="hero shell">
+          <div className="fade-up" style={{ animationDelay: "0.12s" }}>
+            <div className="eyebrow">
+              <span className="dot"></span>
+              AI note-taking for overloaded calendars
+            </div>
+            <h1>
+              Your thoughts, meetings, and next steps in one <span className="display">clear system</span>
+            </h1>
+            <p className="lead">
+              ClarityOS captures what matters, organizes it instantly, and turns every conversation into searchable notes and ready-to-send action plans for busy professionals.
+            </p>
+            <div className="actions">
+              <a className="btn btn-primary" href="#cta">Try it free for 14 days</a>
+              <a className="btn btn-secondary" href="#features">See how it works</a>
+            </div>
+            <div className="hero-meta">
+              <span>No credit card required</span>
+              <span>Works with Zoom, Meet, and voice memos</span>
+              <span>Trusted by consultants, operators, and founders</span>
+            </div>
+          </div>
+
+          <div className="hero-card fade-up" style={{ animationDelay: "0.22s" }}>
+            <div className="app-window">
+              <div className="sidebar">
+                <div className="sidebar-title">Workspace</div>
+                <div className="nav-item active">Today</div>
+                <div className="nav-item">Client calls</div>
+                <div className="nav-item">Team syncs</div>
+                <div className="nav-item">Voice ideas</div>
+                <div className="nav-item">Action tracker</div>
+              </div>
+
+              <div className="workspace">
+                <div className="section-title">AI Meeting Brief</div>
+                <div className="transcript">
+                  <h3>Q2 pipeline review with Northstar Health</h3>
+                  <p>
+                    Summary: Expand pilot from 3 to 12 seats, flag compliance review by April 4, and send revised onboarding plan this week.
+                  </p>
+                </div>
+                <div className="summary-grid">
+                  <div className="mini-card">
+                    <div className="mini-label">Key decisions</div>
+                    <div className="mini-value">Pilot approved. Budget unlocked after legal sign-off.</div>
+                  </div>
+                  <div className="mini-card">
+                    <div className="mini-label">Next actions</div>
+                    <ul className="mini-list">
+                      <li>Send revised rollout deck</li>
+                      <li>Book compliance workshop</li>
+                      <li>Confirm procurement owner</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="mini-card">
+                  <div className="mini-label">Ask ClarityOS</div>
+                  <div className="mini-value" style={{ color: "#53625a", fontWeight: 600 }}>
+                    “What risks came up in client calls this week?” “Show every note where onboarding timing was mentioned.”
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Features() {
+      return (
+        <section className="section shell" id="features">
+          <div className="section-head fade-up">
+            <div>
+              <div className="eyebrow">Why professionals switch</div>
+              <h2>Less note wrangling. More real follow-through.</h2>
+            </div>
+            <p className="section-copy">
+              Built for people who move between calls, tasks, and decisions all day. ClarityOS reduces admin overhead without asking you to change how you already work.
+            </p>
+          </div>
+
+          <div className="features">
+            {features.map((item, index) => (
+              <div
+                className="feature fade-up"
+                key={item.title}
+                style={{ animationDelay: `${0.08 * index}s` }}
+              >
+                <div className="feature-icon">{item.icon}</div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function Stories() {
+      return (
+        <section className="section shell" id="stories">
+          <div className="section-head fade-up">
+            <div>
+              <div className="eyebrow">Customer stories</div>
+              <h2>Teams trust it when details actually matter</h2>
+            </div>
+            <p className="section-copy">
+              From client-facing professionals to internal operators, people use ClarityOS to keep decisions visible and follow-ups moving without another note cleanup cycle.
+            </p>
+          </div>
+
+          <div className="testimonials">
+            {testimonials.map((t, index) => (
+              <div className="quote fade-up" key={t.name} style={{ animationDelay: `${0.1 * index}s` }}>
+                <p>“{t.quote}”</p>
+                <div className="person">
+                  <div className="avatar">{t.initials}</div>
+                  <div>
+                    <div style={{ color: "var(--ink)" }}>{t.name}</div>
+                    <div>{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function Pricing() {
+      return (
+        <section className="section shell" id="pricing">
+          <div className="pricing">
+            <div className="pricing-card fade-up">
+              <div className="eyebrow">Simple pricing preview</div>
+              <h3>Professional plan</h3>
+              <div className="price">
+                <strong>$24</strong>
+                <span>per user / month</span>
+              </div>
+              <div style={{ color: "var(--muted)", lineHeight: 1.7, fontSize: "15px" }}>
+                Everything you need to capture meetings, organize notes, and stay on top of next steps without extra manual work.
+              </div>
+              <div className="list">
+                {checks.map((item) => (
+                  <div className="list-item" key={item}>
+                    <span className="check">✓</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <a className="btn btn-primary" href="#cta">Start free trial</a>
+            </div>
+
+            <div className="stats">
+              <div className="stat-box fade-up" style={{ animationDelay: "0.08s" }}>
+                <div className="stat-label">Average time saved</div>
+                <div className="stat-value">6.4 hrs</div>
+                <div className="stat-copy">Recovered every week by replacing manual note cleanup and post-meeting admin.</div>
+              </div>
+              <div className="stat-box alt fade-up" style={{ animationDelay: "0.16s" }}>
+                <div className="stat-label">Fast adoption</div>
+                <div className="stat-value">14 min</div>
+                <div className="stat-copy">Typical setup time to connect your workflow and start capturing useful summaries.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function FinalCTA() {
+      return (
+        <section className="cta shell" id="cta">
+          <div className="cta-panel fade-up">
+            <div>
+              <div className="eyebrow">Ready to work lighter?</div>
+              <h2>Let AI handle the notes so you can handle the work.</h2>
+              <p>
+                Start your 14-day free trial and turn every meeting, memo, and idea into structured momentum. No credit card required.
+              </p>
+            </div>
+            <div className="actions">
+              <a className="btn btn-primary" href="#">Start free</a>
+              <a className="btn btn-secondary" href="#">Book a demo</a>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer className="footer shell">
+          <div>© 2026 ClarityOS. AI note-taking for busy professionals.</div>
+          <div>Privacy · Terms · Security</div>
+        </footer>
+      );
+    }
+
+    function App() {
+      return (
+        <>
+          <Nav />
+          <Hero />
+          <Features />
+          <Stories />
+          <Pricing />
+          <FinalCTA />
+          <Footer />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northline Supply</title>
+  <style>
+    :root {
+      --night: #182127;
+      --basalt: #27343d;
+      --stone: #d8ccb8;
+      --sand: #bca487;
+      --rust: #bb5c38;
+      --clay: #8b3f2a;
+      --lichen: #6c7561;
+      --fog: #f0e6d8;
+      --water: #7f9ca0;
+      --line: rgba(24, 33, 39, 0.14);
+      --max: 1340px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        linear-gradient(180deg, #d5c6af 0 28rem, #f0e6d8 28rem 58rem, #d8ccb8 58rem 100%);
+      color: var(--night);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    #root { min-height: 100vh; }
+
+    .page {
+      width: min(calc(100% - 28px), var(--max));
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    .topline {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px 28px;
+      padding: 18px 0 10px;
+      border-bottom: 1px solid rgba(24, 33, 39, 0.18);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      letter-spacing: 0.03em;
+      font-size: 1.2rem;
+    }
+
+    .wordmark span:last-child {
+      color: var(--clay);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+    }
+
+    .navlinks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      align-items: center;
+    }
+
+    .navlinks a {
+      opacity: 0.82;
+    }
+
+    .masthead {
+      display: grid;
+      gap: 0;
+      padding: 16px 0 0;
+    }
+
+    .hero-board {
+      background: linear-gradient(145deg, rgba(24,33,39,0.98), rgba(39,52,61,0.94));
+      color: var(--fog);
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .hero-top {
+      display: grid;
+      gap: 20px;
+    }
+
+    .route-note {
+      display: inline-block;
+      width: fit-content;
+      padding: 6px 0;
+      border-bottom: 2px solid rgba(240, 230, 216, 0.35);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .hero-copy h1 {
+      margin: 0;
+      font-size: clamp(3rem, 10vw, 6.5rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      letter-spacing: 0.03em;
+      max-width: 10ch;
+    }
+
+    .hero-copy p {
+      margin: 0;
+      max-width: 34rem;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: rgba(240,230,216,0.88);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .action {
+      border: 1px solid rgba(240,230,216,0.24);
+      padding: 14px 18px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.92rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--fog);
+      transition: 180ms ease;
+    }
+
+    .action.hot {
+      background: var(--rust);
+      border-color: var(--rust);
+      color: #fff6ef;
+    }
+
+    .action:hover {
+      transform: translateY(-2px);
+      background: rgba(240,230,216,0.08);
+    }
+
+    .action.hot:hover {
+      background: #cf6b45;
+    }
+
+    .hero-side {
+      background: linear-gradient(180deg, rgba(188,164,135,0.95), rgba(139,63,42,0.95));
+      color: #fff4ea;
+      padding: 18px;
+      display: grid;
+      gap: 20px;
+      align-content: space-between;
+      min-height: 240px;
+    }
+
+    .kit-list {
+      display: grid;
+      gap: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .kit-item {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 14px;
+      align-items: start;
+      border-top: 1px solid rgba(255,244,234,0.24);
+      padding-top: 12px;
+    }
+
+    .kit-item:first-child { border-top: 0; padding-top: 0; }
+
+    .kit-num {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .kit-copy strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .kit-copy span {
+      display: block;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: rgba(255,244,234,0.86);
+    }
+
+    .measure-band {
+      display: grid;
+      gap: 1px;
+      background: rgba(24,33,39,0.18);
+      margin-top: 1px;
+    }
+
+    .measure-band > div {
+      background: rgba(240,230,216,0.72);
+      padding: 16px 18px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .measure-band strong {
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      color: var(--clay);
+    }
+
+    .measure-band span {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .story-layout,
+    .about-layout {
+      display: grid;
+      gap: 1px;
+      background: rgba(24,33,39,0.14);
+      margin-top: 18px;
+    }
+
+    .story-panel,
+    .about-panel,
+    .review-strip,
+    .signup-panel {
+      background: var(--fog);
+      padding: 22px 18px;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      line-height: 0.96;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      max-width: 10ch;
+    }
+
+    .story-lead {
+      font-size: 1.08rem;
+      line-height: 1.7;
+      max-width: 48rem;
+      margin: 0;
+    }
+
+    .trace {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .trace div {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .trace strong {
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--clay);
+    }
+
+    .trace span {
+      line-height: 1.55;
+      color: rgba(24,33,39,0.8);
+    }
+
+    .story-aside {
+      background: var(--night);
+      color: var(--fog);
+      padding: 22px 18px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .material-grid {
+      display: grid;
+      gap: 1px;
+      background: rgba(240,230,216,0.16);
+    }
+
+    .material-grid div {
+      background: rgba(255,255,255,0.04);
+      padding: 16px 14px;
+    }
+
+    .material-grid strong,
+    .collection-rail strong,
+    .about-preview strong {
+      display: block;
+      margin-bottom: 6px;
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .material-grid p,
+    .collection-rail p,
+    .about-preview p {
+      margin: 0;
+      line-height: 1.55;
+      color: inherit;
+    }
+
+    .collections-wrap {
+      margin-top: 18px;
+      display: grid;
+      gap: 1px;
+      background: rgba(24,33,39,0.14);
+    }
+
+    .collection-row {
+      background: var(--stone);
+      padding: 0;
+      display: grid;
+      gap: 1px;
+    }
+
+    .collection-rail {
+      padding: 20px 18px;
+      background: rgba(240,230,216,0.6);
+    }
+
+    .collection-body {
+      padding: 24px 18px;
+      background: var(--fog);
+      display: grid;
+      gap: 12px;
+    }
+
+    .collection-body h3 {
+      margin: 0;
+      font-size: clamp(1.5rem, 5vw, 2.6rem);
+      line-height: 1;
+      text-transform: uppercase;
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    .collection-body p {
+      margin: 0;
+      max-width: 42rem;
+      line-height: 1.65;
+    }
+
+    .collection-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(24,33,39,0.72);
+    }
+
+    .review-block {
+      margin-top: 18px;
+      display: grid;
+      gap: 1px;
+      background: rgba(24,33,39,0.16);
+    }
+
+    .review-strip {
+      background: linear-gradient(90deg, rgba(127,156,160,0.24), rgba(240,230,216,0.95));
+      display: grid;
+      gap: 8px;
+    }
+
+    .review-strip:nth-child(2) {
+      background: linear-gradient(90deg, rgba(188,92,56,0.22), rgba(240,230,216,0.95));
+    }
+
+    .review-strip:nth-child(3) {
+      background: linear-gradient(90deg, rgba(108,117,97,0.24), rgba(240,230,216,0.95));
+    }
+
+    .review-text {
+      font-size: 1.28rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .review-byline {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.84rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(24,33,39,0.7);
+    }
+
+    .signup-grid {
+      margin-top: 18px;
+      display: grid;
+      gap: 1px;
+      background: rgba(24,33,39,0.16);
+    }
+
+    .signup-panel {
+      background: var(--night);
+      color: var(--fog);
+    }
+
+    .signup-panel p {
+      margin: 0 0 18px;
+      max-width: 34rem;
+      line-height: 1.7;
+      color: rgba(240,230,216,0.84);
+    }
+
+    .fieldrow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .fieldrow input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(240,230,216,0.26);
+      background: transparent;
+      color: var(--fog);
+      font-size: 1rem;
+    }
+
+    .fieldrow input::placeholder { color: rgba(240,230,216,0.46); }
+
+    .fieldrow button {
+      padding: 14px 16px;
+      border: 0;
+      background: var(--rust);
+      color: #fff7ef;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .signup-note {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(240,230,216,0.6);
+    }
+
+    .about-panel {
+      background: rgba(240,230,216,0.92);
+    }
+
+    .about-preview {
+      display: grid;
+      gap: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .about-preview:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .footer {
+      margin-top: 18px;
+      border-top: 1px solid rgba(24,33,39,0.18);
+      padding: 18px 0 12px;
+      display: grid;
+      gap: 14px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .footer-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .footer small {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(24,33,39,0.62);
+    }
+
+    @media (min-width: 700px) {
+      .hero-board {
+        grid-template-columns: 1.35fr 0.9fr;
+        align-items: stretch;
+      }
+
+      .measure-band {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .story-layout,
+      .about-layout,
+      .signup-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+
+      .fieldrow {
+        grid-template-columns: 1.3fr auto;
+        align-items: end;
+      }
+
+      .collection-row {
+        grid-template-columns: 0.72fr 1.28fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1.2fr 0.8fr 0.8fr;
+      }
+    }
+
+    @media (min-width: 980px) {
+      .page {
+        width: min(calc(100% - 44px), var(--max));
+      }
+
+      .hero-board,
+      .story-panel,
+      .story-aside,
+      .collection-body,
+      .collection-rail,
+      .review-strip,
+      .signup-panel,
+      .about-panel {
+        padding: 28px;
+      }
+
+      .hero-top {
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: end;
+      }
+
+      .hero-side { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="module">
+    import React from "https://esm.sh/react@18.3.1";
+    import { createRoot } from "https://esm.sh/react-dom@18.3.1/client";
+
+    const collections = [
+      {
+        label: "Collection 01",
+        title: "Trail Haul",
+        meta: ["packs + slings", "reclaimed nylon", "weekend-ready"],
+        text: "Built for dawn bus rides, switchback climbs, and the kind of overpacking that somehow still feels necessary. Rugged shells, repairable straps, and pockets that make sense when you are moving fast."
+      },
+      {
+        label: "Collection 02",
+        title: "Cold Shore",
+        meta: ["shell layers", "traceable wool", "storm-minded"],
+        text: "Windproof outer layers and insulated liners cut for coastlines, ferry decks, and shoulder-season campouts. Less bulk, better weather sense, and materials selected to keep synthetic waste down."
+      },
+      {
+        label: "Collection 03",
+        title: "Camp Market",
+        meta: ["kitchen + utility", "plant-dyed canvas", "shared gear"],
+        text: "Roll-top totes, cook wraps, and camp organizers designed for the friend who always ends up feeding everyone. Honest gear with low-impact finishes and enough grit to survive muddy ground cloth duty."
+      }
+    ];
+
+    const reviews = [
+      {
+        text: "Northline makes gear that looks sharp in the city and still feels right tossed into wet gravel at a trailhead. That balance is rare.",
+        byline: "Maya, 24 • Portland route guide"
+      },
+      {
+        text: "I bought a sling for train trips and ended up taking it on every climb. The recycled fabric feels substantial, not performative.",
+        byline: "Eli, 27 • student filmer"
+      },
+      {
+        text: "Most sustainable brands talk softly and design safely. Northline came in loud, useful, and actually durable.",
+        byline: "Jules, 22 • bikepack organizer"
+      }
+    ];
+
+    function App() {
+      return React.createElement(
+        "main",
+        { className: "page" },
+        React.createElement(
+          "header",
+          { className: "topline" },
+          React.createElement(
+            "div",
+            { className: "wordmark" },
+            React.createElement("span", null, "Northline Supply"),
+            React.createElement("span", null, "Field gear with less waste")
+          ),
+          React.createElement(
+            "nav",
+            { className: "navlinks", "aria-label": "Primary" },
+            React.createElement("a", { href: "#story" }, "Story"),
+            React.createElement("a", { href: "#collections" }, "Collections"),
+            React.createElement("a", { href: "#reviews" }, "Reviews"),
+            React.createElement("a", { href: "#dispatch" }, "Dispatch"),
+            React.createElement("a", { href: "#about" }, "About")
+          )
+        ),
+
+        React.createElement(
+          "section",
+          { className: "masthead" },
+          React.createElement(
+            "div",
+            { className: "hero-board" },
+            React.createElement(
+              "div",
+              { className: "hero-copy" },
+              React.createElement("div", { className: "route-note" }, "For the long way around"),
+              React.createElement("h1", null, "Gear for people who leave the campsite cleaner than they found it."),
+              React.createElement(
+                "p",
+                null,
+                "Northline Supply makes travel gear with reclaimed fabrics, repair-first construction, and a tougher visual edge than the usual eco aisle. Pack less guilt. Drag more stories home."
+              ),
+              React.createElement(
+                "div",
+                { className: "hero-actions" },
+                React.createElement("a", { className: "action hot", href: "#collections" }, "Shop the season"),
+                React.createElement("a", { className: "action", href: "#story" }, "See how we build")
+              )
+            ),
+            React.createElement(
+              "aside",
+              { className: "hero-side" },
+              React.createElement(
+                "div",
+                { className: "kit-list" },
+                React.createElement(
+                  "div",
+                  { className: "kit-item" },
+                  React.createElement("div", { className: "kit-num" }, "Route 01"),
+                  React.createElement(
+                    "div",
+                    { className: "kit-copy" },
+                    React.createElement("strong", null, "Recovered textiles"),
+                    React.createElement("span", null, "Ocean-bound nylon, climbing rope offcuts, and surplus deadstock turned into field gear worth keeping.")
+                  )
+                ),
+                React.createElement(
+                  "div",
+                  { className: "kit-item" },
+                  React.createElement("div", { className: "kit-num" }, "Route 02"),
+                  React.createElement(
+                    "div",
+                    { className: "kit-copy" },
+                    React.createElement("strong", null, "Repair over replace"),
+                    React.createElement("span", null, "Replaceable hardware and patch kits extend product life instead of treating damage like the end of the story.")
+                  )
+                ),
+                React.createElement(
+                  "div",
+                  { className: "kit-item" },
+                  React.createElement("div", { className: "kit-num" }, "Route 03"),
+                  React.createElement(
+                    "div",
+                    { className: "kit-copy" },
+                    React.createElement("strong", null, "Small-run production"),
+                    React.createElement("span", null, "Short batches mean fewer leftovers, tighter quality control, and drops that feel collected rather than churned out.")
+                  )
+                )
+              )
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "measure-band" },
+            React.createElement("div", null, React.createElement("strong", null, "83%"), React.createElement("span", null, "average recycled content across the current range")),
+            React.createElement("div", null, React.createElement("strong", null, "4 Years"), React.createElement("span", null, "free repair coverage on every pack and shell")),
+            React.createElement("div", null, React.createElement("strong", null, "12 Drops"), React.createElement("span", null, "tight seasonal releases instead of constant overproduction"))
+          )
+        ),
+
+        React.createElement(
+          "section",
+          { id: "story", className: "story-layout" },
+          React.createElement(
+            "div",
+            { className: "story-panel" },
+            React.createElement("h2", { className: "section-title" }, "A product story with dirt under its nails."),
+            React.createElement(
+              "p",
+              { className: "story-lead" },
+              "We started by asking a blunt question: why does so much outdoor gear preach stewardship while wearing out fast and aging badly? Northline answers with heavyweight fabrics, visible repair logic, and a color language pulled from shale, rust, cold water, and dry grass instead of trend reports."
+            ),
+            React.createElement(
+              "div",
+              { className: "trace" },
+              React.createElement("div", null, React.createElement("strong", null, "Source"), React.createElement("span", null, "We buy reclaimed and traceable materials first, then design around what can be responsibly sourced instead of forcing wasteful perfection.")),
+              React.createElement("div", null, React.createElement("strong", null, "Build"), React.createElement("span", null, "Panels are cut to minimize scrap, with high-stress points reinforced so your bag ages like a jacket, not like disposable packaging.")),
+              React.createElement("div", null, React.createElement("strong", null, "Return"), React.createElement("span", null, "When a piece has truly run its course, we recover usable hardware and fibers through our send-back program for future batches."))
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "story-aside" },
+            React.createElement("h3", { style: { margin: 0, fontFamily: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif', fontSize: "2rem", textTransform: "uppercase", letterSpacing: ".03em", lineHeight: 1 } }, "Material notes"),
+            React.createElement(
+              "div",
+              { className: "material-grid" },
+              React.createElement("div", null, React.createElement("strong", null, "Shell"), React.createElement("p", null, "Recycled nylon ripstop with a dry-touch finish that avoids the plasticky shine common in low-grade “green” fabric.")),
+              React.createElement("div", null, React.createElement("strong", null, "Lining"), React.createElement("p", null, "Solution-dyed interiors reduce water use and make it easier to spot your gear without resorting to neon clutter.")),
+              React.createElement("div", null, React.createElement("strong", null, "Trim"), React.createElement("p", null, "Modular buckles, field-repair cords, and hardware selected for replacement rather than permanent glue fixes."))
+            )
+          )
+        ),
+
+        React.createElement(
+          "section",
+          { id: "collections", className: "collections-wrap" },
+          collections.map((item) =>
+            React.createElement(
+              "article",
+              { className: "collection-row", key: item.title },
+              React.createElement(
+                "div",
+                { className: "collection-rail" },
+                React.createElement("strong", null, item.label),
+                React.createElement("p", null, "Designed for younger hikers, train surfers, camp cooks, and weekend escape artists who want fewer pieces that work harder.")
+              ),
+              React.createElement(
+                "div",
+                { className: "collection-body" },
+                React.createElement("h3", null, item.title),
+                React.createElement(
+                  "div",
+                  { className: "collection-meta" },
+                  item.meta.map((m) => React.createElement("span", { key: m }, m))
+                ),
+                React.createElement("p", null, item.text)
+              )
+            )
+          )
+        ),
+
+        React.createElement(
+          "section",
+          { id: "reviews", className: "review-block" },
+          reviews.map((review, index) =>
+            React.createElement(
+              "div",
+              { className: "review-strip", key: index },
+              React.createElement("p", { className: "review-text" }, "“", review.text, "”"),
+              React.createElement("div", { className: "review-byline" }, review.byline)
+            )
+          )
+        ),
+
+        React.createElement(
+          "section",
+          { id: "dispatch", className: "signup-grid" },
+          React.createElement(
+            "div",
+            { className: "signup-panel" },
+            React.createElement("h2", { className: "section-title", style: { color: "var(--fog)", maxWidth: "9ch" } }, "Join the dispatch."),
+            React.createElement(
+              "p",
+              null,
+              "Seasonal drops, trail notes, repair workshops, and the occasional map for a weekend that goes off-script. Useful mail only."
+            ),
+            React.createElement(
+              "form",
+              { className: "fieldrow", onSubmit: (e) => e.preventDefault() },
+              React.createElement("input", { type: "email", placeholder: "Email for field reports", "aria-label": "Email address" }),
+              React.createElement("button", { type: "submit" }, "Sign up")
+            ),
+            React.createElement("div", { className: "signup-note", style: { marginTop: "12px" } }, "Two to three notes a month. Repair alerts and drop dates first.")
+          ),
+          React.createElement(
+            "div",
+            { id: "about", className: "about-panel" },
+            React.createElement("h2", { className: "section-title", style: { maxWidth: "8ch" } }, "About the people behind it."),
+            React.createElement(
+              "div",
+              { className: "about-preview" },
+              React.createElement("strong", null, "Northline is run by climbers, ferry commuters, and overnighters."),
+              React.createElement("p", null, "We test gear in ordinary weather, on borrowed time, with real backpacks and public transport schedules. The goal is not fantasy expedition theater. It is durable travel gear that earns repeated use.")
+            ),
+            React.createElement(
+              "div",
+              { className: "about-preview" },
+              React.createElement("strong", null, "Our about page digs into makers, mills, and repairs."),
+              React.createElement("p", null, "You will find factory partners, material breakdowns, care guides, and why we would rather improve a pattern for three seasons than flood the world with slight variations.")
+            )
+          )
+        ),
+
+        React.createElement(
+          "footer",
+          { className: "footer" },
+          React.createElement(
+            "div",
+            { className: "footer-grid" },
+            React.createElement("div", null, React.createElement("small", null, "Northline Supply"), React.createElement("div", { style: { marginTop: "6px", lineHeight: 1.6 } }, "Eco-minded travel gear for the next train out, the next ridge over, and the next weekend that starts before sunrise.")),
+            React.createElement("div", null, React.createElement("small", null, "Browse"), React.createElement("div", { style: { marginTop: "6px", lineHeight: 1.9 } }, "Shop\nStory\nRepairs")),
+            React.createElement("div", null, React.createElement("small", null, "Visit"), React.createElement("div", { style: { marginTop: "6px", lineHeight: 1.9 } }, "Portland studio\nMon to Sat\nhello@northline.supply"))
+          ),
+          React.createElement("small", null, "© 2026 Northline Supply. Build less waste. Keep moving.")
+        )
+      );
+    }
+
+    createRoot(document.getElementById("root")).render(React.createElement(App));
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Created a standalone landing page at [customer-support-chatbot-landing.html](/Users/dennis/git/unslop-codex/customer-support-chatbot-landing.html). It’s built around a support-operations narrative instead of the default SaaS hero/card stack: a live “support room” hero, clear pain-to-outcome framing, workflow explanation, proof, objection handling, and repeated high-intent CTAs.
+
+The visual direction is warm editorial/product instead of generic AI SaaS: custom typography, tinted neutrals, asymmetric sectioning, and restrained motion with reduced-motion handling. I kept it self-contained so you can open it directly in a browser and iterate quickly.
+
+Verification: I did a structural pass on anchors, responsive breakpoints, CTA links, and section flow. I did not run a browser screenshot/render test in this turn.

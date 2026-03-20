@@ -1,0 +1,1 @@
+Build a React marketing site for an eco-friendly travel gear brand called Northline Supply. Include a landing page, product story section, featured collections, customer reviews, email signup, and an about page preview. Use earthy colors, bold typography, and mobile-first responsive design. Write persuasive copy aimed at younger outdoor enthusiasts who care about sustainability.

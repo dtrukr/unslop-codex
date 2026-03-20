@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LedgerLane | Invoices and Proposals for Freelancers</title>
+  <meta name="description" content="LedgerLane helps freelancers create polished proposals, send invoices faster, and get paid with less admin work." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --surface: rgba(255,255,255,0.82);
+      --surface-strong: #ffffff;
+      --text: #14211b;
+      --muted: #5f6c64;
+      --line: rgba(20, 33, 27, 0.12);
+      --primary: #0f7a5c;
+      --primary-dark: #0b5c45;
+      --accent: #f3b653;
+      --shadow: 0 24px 60px rgba(17, 33, 24, 0.12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Manrope", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(243,182,83,0.22), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(15,122,92,0.16), transparent 26%),
+        linear-gradient(180deg, #fbfaf7 0%, var(--bg) 100%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 16px;
+      z-index: 10;
+      margin-top: 16px;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(16px);
+      border-radius: 999px;
+      box-shadow: 0 8px 30px rgba(20,33,27,0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 18px;
+      background: linear-gradient(135deg, var(--primary), #19a178);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 14px 20px;
+      font: inherit;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #16916d);
+      box-shadow: 0 14px 30px rgba(15,122,92,0.24);
+    }
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--line);
+    }
+
+    .hero {
+      padding: 72px 0 54px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 42px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .hero h1 {
+      margin: 18px 0 16px;
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      margin: 0 0 28px;
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .dashboard {
+      position: relative;
+      padding: 22px;
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.72));
+      border: 1px solid rgba(20,33,27,0.08);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .dashboard::before {
+      content: "";
+      position: absolute;
+      inset: auto -40px -60px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(243,182,83,0.33), transparent 70%);
+    }
+
+    .window-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #d4dbd7;
+    }
+
+    .panel {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .card, .mini-card {
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid rgba(20,33,27,0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .mini-card {
+      padding: 14px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-top: 8px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 12px;
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .proposal-lines {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .line {
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(15,122,92,0.16), rgba(15,122,92,0.05));
+    }
+
+    .line.short { width: 48%; }
+    .line.mid { width: 72%; }
+
+    .invoice-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .invoice-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(20,33,27,0.06);
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .paid { background: rgba(15,122,92,0.12); color: var(--primary-dark); }
+    .pending { background: rgba(243,182,83,0.18); color: #8a5a00; }
+
+    .section {
+      padding: 42px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .section-head p {
+      margin: 0;
+      max-width: 56ch;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .benefit {
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 26px rgba(20,33,27,0.05);
+    }
+
+    .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, rgba(15,122,92,0.16), rgba(243,182,83,0.24));
+      color: var(--primary-dark);
+      font-weight: 800;
+    }
+
+    .benefit h3, .testimonial h3, .price-card h3, .cta h2 {
+      margin: 0 0 10px;
+      letter-spacing: -0.04em;
+    }
+
+    .benefit p, .testimonial p, .price-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .testimonial {
+      padding: 22px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.68));
+      border: 1px solid var(--line);
+    }
+
+    .person {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      font-size: 14px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, #1a8f6c, #f0a93d);
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .price-card {
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.82);
+    }
+
+    .price-card.featured {
+      background: linear-gradient(180deg, #113329, #184437);
+      color: white;
+      box-shadow: 0 20px 50px rgba(17,51,41,0.24);
+    }
+
+    .price-card.featured p,
+    .price-card.featured .feature-list,
+    .price-card.featured .subtle {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .price {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      margin: 14px 0 4px;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 12px;
+      padding: 0;
+      margin: 22px 0 0;
+      list-style: none;
+      color: var(--muted);
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(15,122,92,0.12);
+      color: var(--primary-dark);
+      font-size: 12px;
+      flex: 0 0 auto;
+    }
+
+    .price-card.featured .check {
+      background: rgba(255,255,255,0.12);
+      color: white;
+    }
+
+    .cta {
+      margin: 42px 0 70px;
+      padding: 34px;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at top right, rgba(243,182,83,0.22), transparent 28%),
+        linear-gradient(135deg, rgba(15,122,92,0.98), rgba(10,88,67,0.96));
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: center;
+      box-shadow: 0 24px 70px rgba(15,122,92,0.24);
+    }
+
+    .cta p {
+      margin: 0;
+      max-width: 58ch;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.7;
+    }
+
+    .cta .btn-secondary {
+      background: white;
+      border: none;
+    }
+
+    footer {
+      padding: 0 0 34px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .hero, .pricing, .layout, .benefits, .testimonials { grid-template-columns: 1fr; }
+      .section-head, .cta, .nav-inner { align-items: flex-start; }
+      .section-head, .cta, .nav-inner { flex-direction: column; }
+      .stats { grid-template-columns: 1fr; }
+      .hero h1 { max-width: 11ch; }
+      .nav-links { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 20px, 1120px); }
+      .hero { padding-top: 42px; }
+      .dashboard { padding: 16px; border-radius: 26px; }
+      .benefit, .testimonial, .price-card, .cta { padding: 20px; }
+      .hero-actions { width: 100%; }
+      .hero-actions .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const benefits = [
+      {
+        icon: "01",
+        title: "Professional proposals in minutes",
+        text: "Send branded proposals with clear pricing, scope, and e-sign approval so clients can say yes without friction."
+      },
+      {
+        icon: "02",
+        title: "Invoices that are easy to track",
+        text: "Create recurring or one-off invoices, see what is outstanding, and keep cash flow visible without spreadsheet cleanup."
+      },
+      {
+        icon: "03",
+        title: "Built for solo operators",
+        text: "Simple enough to use between client calls, but structured enough to help you look organized and credible from day one."
+      }
+    ];
+
+    const testimonials = [
+      {
+        quote: "I stopped chasing paperwork in email threads. Proposals, approvals, and invoices finally live in one place.",
+        name: "Maya Chen",
+        role: "Brand Designer"
+      },
+      {
+        quote: "LedgerLane helped me tighten up my client process. I look more established, and I get paid faster.",
+        name: "Jordan Ellis",
+        role: "Marketing Consultant"
+      },
+      {
+        quote: "The tone feels professional without feeling corporate. My clients understand the work and approve faster.",
+        name: "Rina Patel",
+        role: "Freelance Developer"
+      }
+    ];
+
+    const features = [
+      "Unlimited invoices and proposals",
+      "Client approval and e-sign support",
+      "Automatic reminders for overdue payments",
+      "Simple dashboard with revenue visibility"
+    ];
+
+    function Nav() {
+      return (
+        <div className="nav shell">
+          <div className="nav-inner">
+            <a href="#" className="brand">
+              <span className="brand-mark">L</span>
+              <span>LedgerLane</span>
+            </a>
+            <div className="nav-links">
+              <a href="#benefits">Benefits</a>
+              <a href="#stories">Stories</a>
+              <a href="#pricing">Pricing</a>
+            </div>
+            <a className="btn btn-primary" href="#cta">Start free</a>
+          </div>
+        </div>
+      );
+    }
+
+    function Hero() {
+      return (
+        <section className="shell hero">
+          <div>
+            <div className="eyebrow">Trusted by independent consultants, designers, and developers</div>
+            <h1>Run proposals and invoices without the admin drag.</h1>
+            <p>
+              LedgerLane gives freelancers a clean way to send polished proposals, invoice confidently,
+              and stay on top of payments without feeling like they need a finance team.
+            </p>
+            <div className="hero-actions">
+              <a className="btn btn-primary" href="#cta">Try it free</a>
+              <a className="btn btn-secondary" href="#pricing">See pricing</a>
+            </div>
+            <div className="meta-row">
+              <span>No credit card required</span>
+              <span>Setup in under 10 minutes</span>
+              <span>Made for small business owners</span>
+            </div>
+          </div>
+
+          <div className="dashboard" aria-label="LedgerLane dashboard preview">
+            <div className="window-bar">
+              <span className="window-dot"></span>
+              <span className="window-dot"></span>
+              <span className="window-dot"></span>
+            </div>
+            <div className="panel">
+              <div className="stats">
+                <div className="mini-card">
+                  <div className="subtle">This month billed</div>
+                  <strong>$8,420</strong>
+                </div>
+                <div className="mini-card">
+                  <div className="subtle">Paid on time</div>
+                  <strong>87%</strong>
+                </div>
+                <div className="mini-card">
+                  <div className="subtle">Proposals won</div>
+                  <strong>14</strong>
+                </div>
+              </div>
+              <div className="layout">
+                <div className="card">
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <strong>Proposal draft</strong>
+                    <span className="badge paid">Ready to send</span>
+                  </div>
+                  <div className="proposal-lines">
+                    <div className="line"></div>
+                    <div className="line mid"></div>
+                    <div className="line"></div>
+                    <div className="line short"></div>
+                  </div>
+                </div>
+                <div className="card">
+                  <strong>Recent invoices</strong>
+                  <div className="invoice-list">
+                    <div className="invoice-row">
+                      <span>Northline Studio</span>
+                      <span className="badge paid">Paid</span>
+                    </div>
+                    <div className="invoice-row">
+                      <span>Brightpath Co.</span>
+                      <span className="badge pending">Pending</span>
+                    </div>
+                    <div className="invoice-row">
+                      <span>Oak & Pine</span>
+                      <span className="badge paid">Paid</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Benefits() {
+      return (
+        <section className="shell section" id="benefits">
+          <div className="section-head">
+            <div>
+              <h2>Clear tools for client-facing work</h2>
+            </div>
+            <p>
+              Every part of the workflow is designed to reduce back-and-forth and help you present your business more confidently.
+            </p>
+          </div>
+          <div className="benefits">
+            {benefits.map((item) => (
+              <article className="benefit" key={item.title}>
+                <div className="icon">{item.icon}</div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function Testimonials() {
+      return (
+        <section className="shell section" id="stories">
+          <div className="section-head">
+            <div>
+              <h2>Why freelancers stick with it</h2>
+            </div>
+            <p>
+              Small business owners do not need more complexity. They need a reliable system that looks sharp and keeps work moving.
+            </p>
+          </div>
+          <div className="testimonials">
+            {testimonials.map((item) => (
+              <article className="testimonial" key={item.name}>
+                <h3>“{item.quote}”</h3>
+                <div className="person">
+                  <div className="avatar">{item.name.split(" ").map(n => n[0]).join("")}</div>
+                  <div>
+                    <strong>{item.name}</strong><br />
+                    <span className="subtle">{item.role}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function Pricing() {
+      return (
+        <section className="shell section" id="pricing">
+          <div className="section-head">
+            <div>
+              <h2>Simple pricing that scales with your client work</h2>
+            </div>
+            <p>
+              Start with the essentials, then upgrade when you want deeper automation and stronger reporting.
+            </p>
+          </div>
+          <div className="pricing">
+            <div className="price-card">
+              <h3>Starter</h3>
+              <p>For freelancers getting organized and standardizing their process.</p>
+              <div className="price">$12</div>
+              <div className="subtle">per month</div>
+              <ul className="feature-list">
+                {features.slice(0, 3).map((item) => (
+                  <li key={item}><span className="check">✓</span>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="price-card featured">
+              <h3>Growth</h3>
+              <p>For established independent businesses that want a more polished workflow.</p>
+              <div className="price">$24</div>
+              <div className="subtle">per month</div>
+              <ul className="feature-list">
+                {features.map((item) => (
+                  <li key={item}><span className="check">✓</span>{item}</li>
+                ))}
+              </ul>
+              <div style={{marginTop:"22px"}}>
+                <a className="btn btn-secondary" href="#cta">Start 14-day trial</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function CTA() {
+      return (
+        <section className="shell">
+          <div className="cta" id="cta">
+            <div>
+              <h2>Spend less time managing paperwork and more time serving clients.</h2>
+              <p>
+                Join freelancers using LedgerLane to present stronger proposals, send cleaner invoices, and keep their business running with less overhead.
+              </p>
+            </div>
+            <div style={{display:"flex", gap:"12px", flexWrap:"wrap"}}>
+              <a className="btn btn-secondary" href="#">Create free account</a>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer className="shell">
+          <div style={{display:"flex",justifyContent:"space-between",gap:"16px",flexWrap:"wrap"}}>
+            <span>© 2026 LedgerLane</span>
+            <span>Invoices, proposals, and payment tracking for freelancers</span>
+          </div>
+        </footer>
+      );
+    }
+
+    function App() {
+      return (
+        <>
+          <Nav />
+          <Hero />
+          <Benefits />
+          <Testimonials />
+          <Pricing />
+          <CTA />
+          <Footer />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

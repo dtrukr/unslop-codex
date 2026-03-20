@@ -1,0 +1,3 @@
+Built a full standalone homepage for an agency proposal automation SaaS at [agency-proposal-automation-homepage.html](/Users/dennis/git/unslop-codex/agency-proposal-automation-homepage.html).
+
+It uses an editorial “deal desk” direction instead of the usual SaaS split-hero/card-grid template: custom typography, proposal-specific mock content, workflow and archive sections, responsive layouts, and restrained entrance motion. I also fixed the font URL encoding and did a structural sanity check; I did not open it in a browser here, so the remaining step if you want is a visual pass or adapting it into React.

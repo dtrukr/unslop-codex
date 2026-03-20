@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rally | Interview Scheduling Without the Back-and-Forth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: oklch(96% 0.02 85);
+      --paper-deep: oklch(91% 0.04 81);
+      --ink: oklch(20% 0.03 255);
+      --ink-soft: oklch(37% 0.04 255);
+      --line: oklch(31% 0.03 255 / 0.16);
+      --signal: oklch(68% 0.2 28);
+      --signal-deep: oklch(57% 0.18 29);
+      --acid: oklch(86% 0.15 103);
+      --sky: oklch(78% 0.1 225);
+      --panel: oklch(98% 0.01 85 / 0.72);
+      --shadow: 0 20px 60px rgba(35, 34, 44, 0.12);
+      --max: 1280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Instrument Sans", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.45), transparent 30%),
+        radial-gradient(circle at 85% 14%, rgba(237, 109, 73, 0.2), transparent 22%),
+        radial-gradient(circle at 12% 28%, rgba(188, 209, 97, 0.24), transparent 18%),
+        linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .shell {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+      padding: 20px 0 64px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 10px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+    }
+
+    .mark-shape {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--signal), var(--acid));
+      clip-path: polygon(0 0, 100% 0, 100% 72%, 63% 72%, 63% 100%, 0 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .masthead nav {
+      display: flex;
+      gap: 22px;
+      justify-content: center;
+      font-size: 0.96rem;
+      color: var(--ink-soft);
+    }
+
+    .toplink {
+      padding: 12px 16px;
+      border: 1px solid var(--ink);
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.4);
+      transition: transform 180ms ease, background-color 180ms ease;
+    }
+
+    .toplink:hover,
+    .button:hover,
+    .ghost:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+      gap: 24px;
+      padding-top: 22px;
+      align-items: start;
+    }
+
+    .hero-main {
+      display: grid;
+      gap: 22px;
+    }
+
+    .hero-note {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.86rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .hero-note strong {
+      padding: 8px 12px;
+      background: var(--acid);
+      color: var(--ink);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 11ch;
+      font-family: "Syne", sans-serif;
+      font-size: clamp(4rem, 10vw, 8.3rem);
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .lede {
+      max-width: 42rem;
+      margin: 0;
+      font-size: clamp(1.1rem, 2vw, 1.32rem);
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .button,
+    .ghost {
+      padding: 16px 20px;
+      font-weight: 700;
+      transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+    }
+
+    .button {
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .ghost {
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .ticker {
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 0;
+      margin-top: 8px;
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      gap: 18px;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: sweep 18s linear infinite;
+    }
+
+    .ticker-track span {
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--ink-soft);
+    }
+
+    .ticker-track strong {
+      color: var(--signal-deep);
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .schedule-board,
+    .side-card,
+    .story,
+    .quote-band,
+    .footer-bar {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .schedule-board {
+      padding: 18px;
+      rotate: -1.3deg;
+    }
+
+    .board-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: baseline;
+      margin-bottom: 18px;
+    }
+
+    .board-top strong,
+    .side-card strong,
+    .story-head strong {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .board-top span {
+      font-family: "Syne", sans-serif;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    .lane {
+      display: grid;
+      gap: 10px;
+    }
+
+    .slot {
+      display: grid;
+      grid-template-columns: 74px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .slot:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .slot time {
+      font-weight: 700;
+      color: var(--signal-deep);
+    }
+
+    .slot p,
+    .slot small,
+    .story-copy p,
+    .quote-band p,
+    .footer-bar p {
+      margin: 0;
+    }
+
+    .slot p {
+      font-weight: 700;
+    }
+
+    .slot small,
+    .story-copy span,
+    .footer-bar p {
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    .flag {
+      padding: 6px 9px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .side-card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .metric {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: baseline;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .metric:first-of-type {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .metric b {
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 22px;
+      margin-top: 32px;
+    }
+
+    .story {
+      padding: 24px;
+    }
+
+    .story-head {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .story-head h2,
+    .story-copy h3,
+    .quote-band h2,
+    .footer-bar h2 {
+      margin: 0;
+      font-family: "Syne", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: -0.03em;
+    }
+
+    .story-head h2 {
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      line-height: 0.95;
+      max-width: 12ch;
+    }
+
+    .story-copy {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .story-copy article {
+      display: grid;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .story-copy h3 {
+      font-size: 1.15rem;
+    }
+
+    .quote-band {
+      margin-top: 22px;
+      padding: 22px 24px;
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      gap: 20px;
+      align-items: end;
+      background:
+        linear-gradient(90deg, rgba(235, 222, 181, 0.55), rgba(255, 255, 255, 0.56)),
+        var(--panel);
+    }
+
+    .quote-band h2 {
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+    }
+
+    .quote-band p {
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      line-height: 1.35;
+      max-width: 38rem;
+    }
+
+    .quote-band strong {
+      font-size: 0.86rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .footer-bar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      margin-top: 22px;
+      padding: 24px;
+    }
+
+    .footer-bar h2 {
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      line-height: 0.94;
+      max-width: 11ch;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: flex-end;
+      font-weight: 700;
+    }
+
+    @keyframes sweep {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .ticker-track {
+        animation: none;
+      }
+
+      .toplink,
+      .button,
+      .ghost {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .masthead,
+      .hero,
+      .story-grid,
+      .quote-band,
+      .footer-bar,
+      .story-copy {
+        grid-template-columns: 1fr;
+      }
+
+      .masthead nav {
+        justify-content: start;
+        flex-wrap: wrap;
+      }
+
+      .footer-links {
+        justify-content: start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(var(--max), calc(100% - 20px));
+      }
+
+      .masthead {
+        gap: 12px;
+      }
+
+      .masthead nav {
+        gap: 14px;
+        font-size: 0.9rem;
+      }
+
+      h1 {
+        font-size: clamp(3.2rem, 17vw, 5.4rem);
+      }
+
+      .slot,
+      .metric {
+        grid-template-columns: 1fr;
+      }
+
+      .quote-band,
+      .story,
+      .footer-bar,
+      .schedule-board,
+      .side-card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <a class="mark" href="#top">
+        <span class="mark-shape" aria-hidden="true"></span>
+        <span>Rally</span>
+      </a>
+      <nav aria-label="Primary">
+        <a href="#why">Why Rally</a>
+        <a href="#flow">How it works</a>
+        <a href="#ops">For recruiting ops</a>
+      </nav>
+      <a class="toplink" href="#book">Book a live walkthrough</a>
+    </header>
+
+    <section class="hero" id="top">
+      <div class="hero-main">
+        <div class="hero-note">
+          <strong>Recruiting teams move faster here</strong>
+          <span>No more five-email scheduling chains</span>
+        </div>
+        <h1>Stop scheduling like it’s 2014.</h1>
+        <p class="lede">
+          Rally gives recruiters one place to coordinate interviewer availability, candidate time zones, panel logic, reschedules, and reminders. The calendar chaos disappears. The process finally looks deliberate.
+        </p>
+        <div class="action-row">
+          <a class="button" href="#book">See Rally in 15 minutes</a>
+          <a class="ghost" href="#flow">Read the workflow</a>
+        </div>
+        <div class="ticker" aria-label="Key product capabilities">
+          <div class="ticker-track">
+            <span><strong>Syncs</strong> Google Calendar, Outlook, Greenhouse, Lever</span>
+            <span><strong>Handles</strong> panel interviews, loops, take-homes, reschedules</span>
+            <span><strong>Protects</strong> focus blocks, interviewer caps, office hours</span>
+            <span><strong>Updates</strong> recruiters, hiring managers, and candidates automatically</span>
+            <span><strong>Syncs</strong> Google Calendar, Outlook, Greenhouse, Lever</span>
+            <span><strong>Handles</strong> panel interviews, loops, take-homes, reschedules</span>
+            <span><strong>Protects</strong> focus blocks, interviewer caps, office hours</span>
+            <span><strong>Updates</strong> recruiters, hiring managers, and candidates automatically</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <section class="schedule-board" aria-label="Example interview schedule">
+          <div class="board-top">
+            <strong>Today in Rally</strong>
+            <span>Hiring Sprint</span>
+          </div>
+          <div class="lane">
+            <div class="slot">
+              <time>09:30</time>
+              <div>
+                <p>Backend panel confirmed for Maya Chen</p>
+                <small>Berlin candidate, San Francisco interviewers, time zone converted automatically.</small>
+              </div>
+              <span class="flag">Locked</span>
+            </div>
+            <div class="slot">
+              <time>11:10</time>
+              <div>
+                <p>Design loop rebuilt after one interviewer declined</p>
+                <small>Fallback bench applied. Candidate invite and scorecard links refreshed.</small>
+              </div>
+              <span class="flag">Recovered</span>
+            </div>
+            <div class="slot">
+              <time>14:40</time>
+              <div>
+                <p>Executive screen slotted without six Slack messages</p>
+                <small>Rally found the first overlap across assistant holds, travel blocks, and panel rules.</small>
+              </div>
+              <span class="flag">Booked</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="side-card" id="ops">
+          <strong>What changes for recruiting ops</strong>
+          <div class="metric">
+            <b>71%</b>
+            <span>less time spent manually coordinating calendars across recruiters, candidates, and interviewers.</span>
+          </div>
+          <div class="metric">
+            <b>2.3x</b>
+            <span>faster interview booking when loops need multiple people, approvals, and fallback rules.</span>
+          </div>
+          <div class="metric">
+            <b>0</b>
+            <span>copy-pasted time zone math, calendar screenshots, or “does this slot still work?” follow-up threads.</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="story-grid" id="why">
+      <article class="story">
+        <div class="story-head">
+          <strong>The old process leaks credibility</strong>
+          <h2>Your candidate experience is only as smooth as your calendar ops.</h2>
+        </div>
+        <div class="story-copy">
+          <article>
+            <h3>Recruiters stop chasing replies.</h3>
+            <p>Rally builds interview plans around real availability, buffer rules, interviewer load, and role stage requirements. Recruiters approve instead of coordinate.</p>
+          </article>
+          <article>
+            <h3>Candidates get one clean answer.</h3>
+            <p>Confirmed times, preparation notes, video links, and day-of reminders land in a single thread. No fragmented updates. No confidence loss.</p>
+          </article>
+          <article id="flow">
+            <h3>Hiring teams keep momentum.</h3>
+            <p>When an interviewer drops, Rally swaps from approved benches, preserves the loop structure, and alerts the right people without forcing a restart.</p>
+          </article>
+          <article>
+            <h3>Leaders see bottlenecks early.</h3>
+            <p>Spot overloaded interviewers, slow approvals, role-specific delays, and missed service levels before the funnel turns into a weekly escalation.</p>
+          </article>
+        </div>
+      </article>
+
+      <article class="story">
+        <div class="story-head">
+          <strong>Built for real hiring complexity</strong>
+          <h2>Not another generic booking link.</h2>
+        </div>
+        <div class="story-copy">
+          <article>
+            <h3>Panel logic that respects the process.</h3>
+            <p>Define interview stages, interviewer pools, backup benches, minimum notice windows, and office-hour boundaries once. Rally keeps using them every time.</p>
+          </article>
+          <article>
+            <h3>ATS-native coordination.</h3>
+            <p>Push scheduling context back into your hiring system so recruiters and coordinators are not reconciling status across tabs all day.</p>
+          </article>
+          <article>
+            <h3>Reschedules without embarrassment.</h3>
+            <p>Rebook in minutes with preserved context, updated invites, refreshed scorecards, and transparent messaging to the candidate.</p>
+          </article>
+          <article>
+            <h3>Rules strong enough for scale.</h3>
+            <p>Support high-volume recruiting, executive searches, and globally distributed teams without building a spreadsheet shadow process on the side.</p>
+          </article>
+        </div>
+      </article>
+    </section>
+
+    <section class="quote-band" aria-label="Customer quote">
+      <h2>What teams say</h2>
+      <p>“Before Rally, every interview loop felt like a small fire. Now our coordinators run a system instead of a rescue operation.”</p>
+      <strong>Head of Talent, Series B infrastructure company</strong>
+    </section>
+
+    <section class="footer-bar" id="book">
+      <div>
+        <h2>Schedule faster. Look sharper. Lose the chaos.</h2>
+        <p>Rally is for recruiting teams that want interview scheduling to feel operational, not improvisational.</p>
+      </div>
+      <div class="footer-links">
+        <a class="button" href="mailto:hello@rallyhq.com">Start a pilot</a>
+        <a href="mailto:hello@rallyhq.com">hello@rallyhq.com</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
